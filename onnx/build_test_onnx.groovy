@@ -4,8 +4,8 @@ node(params.NodeSelector) {
         println("============================================== CLEAN STAGE ==============================================")
         cleanWs()
     }
+    println("========================================== STARTING CONTAINER ===========================================")
     docker.image('wkobiela/onnx_build_base:latest').inside(" -v /etc/localtime:/etc/localtime:ro") {
-        println("========================================== STARTING CONTAINER ===========================================")
         stage('Info') {
             println("============================================== INFO STAGE ===============================================")
             println("Node selector choosen: $params.NodeSelector")
