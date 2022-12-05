@@ -9,7 +9,6 @@ node(params.NodeSelector) {
         stage('Info') {
             println("============================================== INFO STAGE ===============================================")
             println("Node selector choosen: $params.NodeSelector")
-            sh label: "Update path", script: 'export PATH="/home/jenkins/.local/bin:$PATH"'
             println("Working dir $env.WORKSPACE")
         }
         stage('Install protobuf') {
@@ -57,7 +56,6 @@ node(params.NodeSelector) {
             println("============================================== TEST STAGE ==============================================")
             try {
                 dir("$env.WORKSPACE/onnx") {
-                    sh label: 'Install pytest', script: 'sudo pip install pytest pytest-html nbval'
                     sh label: 'Run tests', script: 'pytest --html=report.html'
                 }
             }
