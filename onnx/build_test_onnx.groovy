@@ -57,9 +57,26 @@ node(params.NodeSelector) {
             println("============================================== TEST STAGE ==============================================")
             try {
                 dir("$env.WORKSPACE/onnx") {
-                    sh label: 'Install pytest', script: 'sudo pip install pytest nbval'
-                    sh label: 'Run tests', script: 'pytest'
+                    sh label: 'Install pytest', script: 'sudo pip install pytest pytest-html nbval'
+                    sh label: 'Run tests', script: 'pytest --html=report.html'
                 }
+            }
+            catch (Exception e) {
+                println("Exception $e")
+                error "Stage failed!"
+            }
+        }
+        stage("Create report") {
+            println("============================================ REPORT STAGE ==============================================")
+            try {
+                publishHTML (target: [
+                            allowMissing: false,
+                            alwaysLinkToLastBuild: false,
+                            keepAll: true,
+                            reportDir: "$env.WORKDIR/onnx",
+                            reportFiles: 'index.html',
+                            reportName: "Pytest Report"
+                ])
             }
             catch (Exception e) {
                 println("Exception $e")
