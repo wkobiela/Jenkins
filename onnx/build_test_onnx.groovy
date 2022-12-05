@@ -6,34 +6,37 @@ node(params.NodeSelector) {
     }
     println("========================================== STARTING CONTAINER ===========================================")
     docker.image('wkobiela/onnx_build_base:latest').inside(" -v /etc/localtime:/etc/localtime:ro") {
-        stage('Info') {
-            println("============================================== INFO STAGE ===============================================")
-            println("Node selector choosen: $params.NodeSelector")
-            println("Working dir $env.WORKSPACE")
-        }
-        stage('Install protobuf') {
-            println("========================================= INSTALL PROTOBUF STAGE =========================================")
+        stage('Clone Protobuf') {
+            println("========================================== CLONE PROtOBUF STAGE ==========================================")
             try {
-               sh 'git clone https://github.com/protocolbuffers/protobuf.git'
+                sh 'git clone https://github.com/protocolbuffers/protobuf.git'
                 dir ("$env.WORKSPACE/protobuf") {
                     sh label: 'Checkout code', script: 'git checkout v3.20.2'
                     sh label: 'Update submodule', script: 'git submodule update --init --recursive'
-                }
-                dir ("$env.WORKSPACE/protobuf/build_source") {
-                    sh label: "Cmake protobuf", script: "cmake ../cmake -Dprotobuf_BUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_SYSCONFDIR=/etc -DCMAKE_POSITION_INDEPENDENT_CODE=ON -Dprotobuf_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release"
-                    sh label: 'Make protobuf', script: 'make -j$(nproc)'
-                    sh label: 'Install protobuf', script: 'sudo make install'
-                    sh label: 'Export cmake_args', script: 'export CMAKE_ARGS="-DONNX_USE_PROTOBUF_SHARED_LIBS=OFF"'
                 }
             } catch (Exception e) {
                 println("Exception $e")
                 error "Stage failed!"
             }
         }
-        stage('Clone') {
-            println("============================================== CLONE STAGE ==============================================")
+        stage('Clone ONNX') {
+            println("============================================ CLONE ONNX STAGE ============================================")
             try {
                 sh label: 'Cloning ONNX repository', script: 'git clone https://github.com/onnx/onnx.git'
+            } catch (Exception e) {
+                println("Exception $e")
+                error "Stage failed!"
+            }
+        }
+        stage('Install Protobuf') {
+            println("========================================= INSTALL PROTOBUF STAGE =========================================")
+            try {
+                dir ("$env.WORKSPACE/protobuf/build_source") {
+                    sh label: "Cmake protobuf", script: "cmake ../cmake -Dprotobuf_BUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_SYSCONFDIR=/etc -DCMAKE_POSITION_INDEPENDENT_CODE=ON -Dprotobuf_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release"
+                    sh label: 'Make protobuf', script: 'make -j$(nproc)'
+                    sh label: 'Install protobuf', script: 'sudo make install'
+                    sh label: 'Export cmake_args', script: 'export CMAKE_ARGS="-DONNX_USE_PROTOBUF_SHARED_LIBS=OFF"'
+                }
             } catch (Exception e) {
                 println("Exception $e")
                 error "Stage failed!"
