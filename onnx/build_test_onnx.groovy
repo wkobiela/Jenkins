@@ -73,7 +73,7 @@ node(params.NodeSelector) {
                             allowMissing: false,
                             alwaysLinkToLastBuild: false,
                             keepAll: true,
-                            reportDir: "$env.WORKDIR/onnx",
+                            reportDir: "onnx",
                             reportFiles: 'index.html',
                             reportName: "Pytest Report"
                 ])
