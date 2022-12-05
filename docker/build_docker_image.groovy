@@ -1,4 +1,4 @@
-node {
+node(params.NodeSelector) {
     def image
     stage('Clean') {
         println("============================================== CLEAN STAGE ==============================================")
