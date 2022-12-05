@@ -72,7 +72,7 @@ node(params.NodeSelector) {
                             alwaysLinkToLastBuild: false,
                             keepAll: false,
                             reportDir: "onnx",
-                            reportFiles: 'index.html',
+                            reportFiles: 'report.html',
                             reportName: "Pytest Report"
                 ])
             }
