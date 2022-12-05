@@ -68,9 +68,9 @@ node(params.NodeSelector) {
             println("============================================ REPORT STAGE ==============================================")
             try {
                 publishHTML (target: [
-                            allowMissing: false,
+                            allowMissing: true,
                             alwaysLinkToLastBuild: false,
-                            keepAll: true,
+                            keepAll: false,
                             reportDir: "onnx",
                             reportFiles: 'index.html',
                             reportName: "Pytest Report"
