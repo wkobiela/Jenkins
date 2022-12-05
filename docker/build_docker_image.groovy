@@ -1,4 +1,5 @@
 node(params.NodeSelector) {
+    currentBuild.displayName = "#$env.BUILD_NUMBER node: $env.NODE_NAME"
     def image
     stage('Clean') {
         println("============================================== CLEAN STAGE ==============================================")
