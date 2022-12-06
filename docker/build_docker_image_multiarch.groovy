@@ -10,7 +10,6 @@ node(params.NodeSelector) {
         try {
             withCredentials([usernamePassword(credentialsId: "$params.CredentialsUser", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                 sh "echo $PASSWORD | docker login -u $USERNAME --password-stdin"
-                println("Password to $params.CredentialsUser $DOCKERPASS")
             }
         } catch (Exception e) {
             println("Exception $e")
@@ -26,17 +25,17 @@ node(params.NodeSelector) {
             error "Stage failed!"
         }
     }
-//    stage('Build') {
-//        println("============================================== BUILD STAGE ==============================================")
-//        try {
-//            dir("$env.WORKSPACE/Dockerfiles/$params.DockerfileDir") {
-//                image = docker.build(params.ImageName)
-//            }
-//        } catch (Exception e) {
-//            println("Exception $e")
-//            error "Stage failed!"
-//        }
-//    }
+    stage('Build') {
+        println("============================================== BUILD STAGE ==============================================")
+        try {
+            dir("$env.WORKSPACE/Dockerfiles/$params.DockerfileDir") {
+                sh "docker buildx build --platform linux/amd64,linux/arm/v7 ."
+            }
+        } catch (Exception e) {
+            println("Exception $e")
+            error "Stage failed!"
+        }
+    }
 //    stage('Push image') {
 //        println("============================================== PUSH STAGE ===============================================")
 //        try {
@@ -48,13 +47,13 @@ node(params.NodeSelector) {
 //            error "Stage failed!"
 //        }
 //    }
-    stage('Remove image') {
-        println("============================================ REMOVE STAGE ===============================================")
-        try {
-            sh "docker buildx prune"
-        } catch (Exception e) {
-            println("Exception $e")
-            error "Stage failed!"
-        }
-    }
+//    stage('Remove image') {
+//        println("============================================ REMOVE STAGE ===============================================")
+//        try {
+//            sh "docker buildx prune"
+//        } catch (Exception e) {
+//            println("Exception $e")
+//            error "Stage failed!"
+//        }
+//    }
 }
