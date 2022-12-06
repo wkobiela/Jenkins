@@ -9,9 +9,11 @@ node(params.NodeSelector) {
         println("============================================== CLONE STAGE ==============================================")
         try {
             sh 'git clone https://github.com/wkobiela/Dockerfiles.git'
+            dir("$env.WORKSPACE/Dockerfiles") {
+                sh label: 'Check last commit', script: 'git log -1'
+            }
         } catch (Exception e) {
-            println("Exception $e")
-            error "Stage failed!"
+            error "Stage failed with exception $e"
         }
     }
     stage('Build') {
@@ -21,8 +23,7 @@ node(params.NodeSelector) {
                 image = docker.build(params.ImageName)
             }
         } catch (Exception e) {
-            println("Exception $e")
-            error "Stage failed!"
+            error "Stage failed with exception $e"
         }
     }
     stage('Test') {
@@ -32,8 +33,7 @@ node(params.NodeSelector) {
                 sh 'echo "Tests passed"'
             }
         } catch (Exception e) {
-            println("Exception $e")
-            error "Stage failed!"
+            error "Stage failed with exception $e"
         }
     }
     stage('Push image') {
@@ -43,8 +43,7 @@ node(params.NodeSelector) {
                 image.push("latest")
             }
         } catch (Exception e) {
-            println("Exception $e")
-            error "Stage failed!"
+            error "Stage failed with exception $e"
         }
     }
     stage('Remove image') {
@@ -52,8 +51,11 @@ node(params.NodeSelector) {
         try {
             sh "docker rmi $params.ImageName"
         } catch (Exception e) {
-            println("Exception $e")
-            error "Stage failed!"
+            error "Stage failed with exception $e"
         }
+    }
+    stage('Clean') {
+        println("============================================== CLEAN STAGE ==============================================")
+        cleanWs()
     }
 }
