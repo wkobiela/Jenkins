@@ -63,25 +63,26 @@ node(params.NodeSelector) {
                 }
             }
             catch (Exception e) {
-                println("Exception $e")
-                error "Stage failed!"
+                unstable("Test stage exited with exception $e")
             }
-        }
-        stage("Create report") {
-            println("============================================ REPORT STAGE ==============================================")
-            try {
-                publishHTML (target: [
-                            allowMissing: true,
-                            alwaysLinkToLastBuild: false,
-                            keepAll: false,
-                            reportDir: "onnx",
-                            reportFiles: 'report.html',
-                            reportName: "Pytest Report"
-                ])
-            }
-            catch (Exception e) {
-                println("Exception $e")
-                error "Stage failed!"
+            finally {
+                stage("Create report") {
+                    println("============================================ REPORT STAGE ==============================================")
+                    try {
+                        publishHTML (target: [
+                                allowMissing: true,
+                                alwaysLinkToLastBuild: false,
+                                keepAll: false,
+                                reportDir: "onnx",
+                                reportFiles: 'report.html',
+                                reportName: "Pytest Report"
+                        ])
+                    }
+                    catch (Exception e) {
+                        println("Exception $e")
+                        error "Stage failed!"
+                    }
+                }
             }
         }
     }
