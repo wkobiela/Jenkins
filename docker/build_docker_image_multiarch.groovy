@@ -8,8 +8,8 @@ node(params.NodeSelector) {
     stage('Login') {
         println("============================================== TEST STAGE ===============================================")
         try {
-            withCredentials([usernameColonPassword(credentialsId: "$params.CredentialsUser", variable: 'DOCKERPASS')]) {
-                sh "docker login -u $params.CredentialsUser -p $DOCKERPASS"
+            withCredentials([usernamePassword(credentialsId: "$params.CredentialsUser", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                sh "echo $PASSWORD | docker login -u $USERNAME --password-stdin"
                 println("Password to $params.CredentialsUser $DOCKERPASS")
             }
         } catch (Exception e) {
