@@ -3,8 +3,9 @@ node(params.NodeSelector) {
     stage('Clean') {
         println("============================================== CLEAN STAGE ==============================================")
         try {
+            sh label: 'Check workspace size', script: "du -sh $env.WORKSPACE"
             sh label: 'Clean workspace', script: "sudo rm -rf $env.WORKSPACE/*"
-            sh label: 'Check workspace status', script: "ls -ll $env.WORKSPACE"
+            sh label: 'Check workspace size', script: "du -sh $env.WORKSPACE"
         } catch (Exception e) {
             error "Stage failed with exception $e"
         }
@@ -91,8 +92,9 @@ node(params.NodeSelector) {
     stage('Clean') {
         println("============================================== CLEAN STAGE ==============================================")
         try {
+            sh label: 'Check workspace size', script: "du -sh $env.WORKSPACE"
             sh label: 'Clean workspace', script: "sudo rm -rf $env.WORKSPACE/*"
-            sh label: 'Check workspace status', script: "ls -ll $env.WORKSPACE"
+            sh label: 'Check workspace size', script: "du -sh $env.WORKSPACE"
         } catch (Exception e) {
             error "Stage failed with exception $e"
         }
