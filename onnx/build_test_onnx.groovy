@@ -2,7 +2,12 @@ node(params.NodeSelector) {
     currentBuild.displayName = "#$env.BUILD_NUMBER node: $env.NODE_NAME"
     stage('Clean') {
         println("============================================== CLEAN STAGE ==============================================")
-        cleanWs()
+        try {
+            sh label: 'Clean workspace', script: "sudo rm -rf $env.WORKSPACE/*"
+            sh label: 'Check workspace status', script: "ls -ll $env.WORKSPACE"
+        } catch (Exception e) {
+            error "Stage failed with exception $e"
+        }
     }
     println("========================================== STARTING CONTAINER ===========================================")
     docker.image('wkobiela/onnx_build_base:latest').inside(" -v /etc/localtime:/etc/localtime:ro") {
@@ -65,24 +70,32 @@ node(params.NodeSelector) {
             catch (Exception e) {
                 unstable("Test stage exited with exception $e")
             }
-            finally {
-                stage("Create report") {
-                    println("============================================ REPORT STAGE ==============================================")
-                    try {
-                        publishHTML (target: [
-                                allowMissing: true,
-                                alwaysLinkToLastBuild: false,
-                                keepAll: false,
-                                reportDir: "onnx",
-                                reportFiles: 'report.html',
-                                reportName: "Pytest Report"
-                        ])
-                    }
-                    catch (Exception e) {
-                        error "Stage failed with exception $e"
-                    }
-                }
+        }
+        stage("Create report") {
+            println("============================================ REPORT STAGE ==============================================")
+            try {
+                publishHTML (target: [
+                        allowMissing: true,
+                        alwaysLinkToLastBuild: false,
+                        keepAll: false,
+                        reportDir: "onnx",
+                        reportFiles: 'report.html',
+                        reportName: "Pytest Report"
+                ])
+            }
+            catch (Exception e) {
+                error "Stage failed with exception $e"
             }
         }
     }
+    stage('Clean') {
+        println("============================================== CLEAN STAGE ==============================================")
+        try {
+            sh label: 'Clean workspace', script: "sudo rm -rf $env.WORKSPACE/*"
+            sh label: 'Check workspace status', script: "ls -ll $env.WORKSPACE"
+        } catch (Exception e) {
+            error "Stage failed with exception $e"
+        }
+    }
 }
+
