@@ -1,5 +1,4 @@
 node(params.NodeSelector) {
-    echo "Pipeline version 06.12.2022 18:07"
     currentBuild.displayName = "#$env.BUILD_NUMBER node: $env.NODE_NAME"
     stage('Clean') {
         println("============================================== CLEAN STAGE ==============================================")
