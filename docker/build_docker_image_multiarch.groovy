@@ -30,7 +30,7 @@ node(params.NodeSelector) {
         println("============================================== BUILD STAGE ==============================================")
         try {
             dir("$env.WORKSPACE/Dockerfiles/$params.DockerfileDir") {
-                sh "docker buildx build --platform linux/amd64,linux/arm/v7 ."
+                sh "docker buildx build --platform $params.Architectures ."
             }
         } catch (Exception e) {
             error "Stage failed with exception $e"
