@@ -1,11 +1,17 @@
 node(params.NodeSelector) {
     currentBuild.displayName = "#$env.BUILD_NUMBER node: $env.NODE_NAME"
 
-    def threads = sh(script: 'echo $(nproc)', returnStdout: true).trim()
+    def threads = sh(script: 'nproc', returnStdout: true).trim().toInteger()
     if (threads > 4) {
-        threads = sh(script: 'echo $(( $(nproc) / 2 ))', returnStdout: true).trim()
+        println("More than 4 threads: ${threads}")
+        threads = threads.div(2)
+        println("Set threads: ${threads}")
     } else if (threads == 4) {
+        println("Exactly ${threads} threads.")
         threads = 4
+        println("Set threads: ${threads}")
+    } else {
+        println("Another variant & set threads: ${threads}")
     }
 
     stage('Clean') {
