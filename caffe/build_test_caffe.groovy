@@ -1,5 +1,13 @@
 node(params.NodeSelector) {
     currentBuild.displayName = "#$env.BUILD_NUMBER node: $env.NODE_NAME"
+
+    def threads = sh(script: 'echo $(nproc)', returnStdout: true).trim()
+    if (threads > 4) {
+        threads = sh(script: 'echo $(( $(nproc) / 2 ))', returnStdout: true).trim()
+    } else if (threads == 4) {
+        threads = 4
+    }
+
     stage('Clean') {
         println("============================================== CLEAN STAGE ==============================================")
         try {
@@ -34,7 +42,7 @@ node(params.NodeSelector) {
             println("============================================= BUILD STAGE ==============================================")
             try {
                 dir ("$env.WORKSPACE/caffe/build") {
-                    sh label: 'Execute make all command', script: 'make all'
+                    sh label: 'Execute make all command', script: "make all -j${threads}"
                     sh label: 'Execute make install command', script: 'make install'
                 }
             } catch (Exception e) {
@@ -45,7 +53,7 @@ node(params.NodeSelector) {
             println("============================================== TEST STAGE ==============================================")
             try {
                 dir("$env.WORKSPACE/caffe/build") {
-                    sh label: 'Run tests', script: 'make runtest'
+                    sh label: 'Run tests', script: "make runtest -j${threads}"
                 }
             }
             catch (Exception e) {
@@ -64,4 +72,3 @@ node(params.NodeSelector) {
         }
     }
 }
-
