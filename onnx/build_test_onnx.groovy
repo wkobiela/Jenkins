@@ -65,7 +65,7 @@ node(params.NodeSelector) {
             println("============================================== TEST STAGE ==============================================")
             try {
                 dir("$env.WORKSPACE/onnx") {
-                    sh label: 'Run tests', script: 'pytest --html=report.html'
+                    sh label: 'Run tests', script: 'pytest --html=report.html --junitxml=report.xml'
                 }
             }
             catch (Exception e) {
@@ -83,6 +83,10 @@ node(params.NodeSelector) {
                         reportFiles: 'report.html',
                         reportName: "Pytest Report"
                 ])
+                dir("$env.WORKSPACE/onnx") {
+                    junit '*.xml'
+                }
+
             }
             catch (Exception e) {
                 error "Stage failed with exception $e"
