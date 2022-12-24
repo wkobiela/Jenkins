@@ -1,7 +1,7 @@
 node(params.NodeSelector) {
     currentBuild.displayName = "#$env.BUILD_NUMBER node: $env.NODE_NAME"
     stage('Clean') {
-        println("============================================== CLEAN STAGE ==============================================")
+        println('============================================= CLEAN STAGE ===========================================')
         try {
             sh label: 'Check workspace size', script: "du -sh $env.WORKSPACE"
             sh label: 'Clean workspace', script: "sudo rm -rf $env.WORKSPACE/*"
@@ -10,14 +10,14 @@ node(params.NodeSelector) {
             error "Stage failed with exception $e"
         }
     }
-    println("========================================== STARTING CONTAINER ===========================================")
-    docker.image('wkobiela/onnx_build_base:latest').inside(" -v /etc/localtime:/etc/localtime:ro") {
+    println('========================================== STARTING CONTAINER ===========================================')
+    docker.image('wkobiela/onnx_build_base:latest').inside(' -v /etc/localtime:/etc/localtime:ro') {
         stage('Clone Protobuf') {
-            println("========================================== CLONE PROTOBUF STAGE ==========================================")
+            println('===================================== CLONE PROTOBUF STAGE ======================================')
             try {
                 sh 'git clone https://github.com/protocolbuffers/protobuf.git'
-                dir ("$env.WORKSPACE/protobuf") {
-                    sh label: 'Check last commit', script: 'git log -1'
+                dir("$env.WORKSPACE/protobuf") {
+                    sh label: 'Check last commit - protobuf', script: 'git log -1'
                     sh label: 'Checkout code', script: 'git checkout v3.20.2'
                     sh label: 'Update submodule', script: 'git submodule update --init --recursive'
                 }
@@ -26,21 +26,27 @@ node(params.NodeSelector) {
             }
         }
         stage('Clone ONNX') {
-            println("============================================ CLONE ONNX STAGE ============================================")
+            println'(======================================== CLONE ONNX STAGE =======================================')
             try {
                 sh label: 'Cloning ONNX repository', script: 'git clone https://github.com/onnx/onnx.git'
-                dir ("$env.WORKSPACE/onnx") {
-                    sh label: 'Check last commit', script: 'git log -1'
+                dir("$env.WORKSPACE/onnx") {
+                    sh label: 'Check last commit - onnx', script: 'git log -1'
                 }
             } catch (Exception e) {
                 error "Stage failed with exception $e"
             }
         }
         stage('Install Protobuf') {
-            println("========================================= INSTALL PROTOBUF STAGE =========================================")
+            println('===================================== INSTALL PROTOBUF STAGE ====================================')
             try {
-                dir ("$env.WORKSPACE/protobuf/build_source") {
-                    sh label: "Cmake protobuf", script: "cmake ../cmake -Dprotobuf_BUILD_SHARED_LIBS=OFF -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_SYSCONFDIR=/etc -DCMAKE_POSITION_INDEPENDENT_CODE=ON -Dprotobuf_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release"
+                dir("$env.WORKSPACE/protobuf/build_source") {
+                    sh label: 'Cmake protobuf', script: 'cmake ../cmake 
+                                                        -Dprotobuf_BUILD_SHARED_LIBS=OFF 
+                                                        -DCMAKE_INSTALL_PREFIX=/usr 
+                                                        -DCMAKE_INSTALL_SYSCONFDIR=/etc 
+                                                        -DCMAKE_POSITION_INDEPENDENT_CODE=ON 
+                                                        -Dprotobuf_BUILD_TESTS=OFF 
+                                                        -DCMAKE_BUILD_TYPE=Release'
                     sh label: 'Make protobuf', script: 'make -j$(nproc)'
                     sh label: 'Install protobuf', script: 'sudo make install'
                     sh label: 'Export cmake_args', script: 'export CMAKE_ARGS="-DONNX_USE_PROTOBUF_SHARED_LIBS=OFF"'
@@ -50,7 +56,7 @@ node(params.NodeSelector) {
             }
         }
         stage('Build ONNX') {
-            println("============================================== BUILD STAGE ==============================================")
+            println('========================================== BUILD STAGE ==========================================')
             try {
                 dir("$env.WORKSPACE/onnx") {
                     sh label: 'Update submodules', script: 'git submodule update --init --recursive'
@@ -62,7 +68,7 @@ node(params.NodeSelector) {
             }
         }
         stage('Test ONNX') {
-            println("============================================== TEST STAGE ==============================================")
+            println('=========================================== TEST STAGE ==========================================')
             try {
                 dir("$env.WORKSPACE/onnx") {
                     sh label: 'Run tests', script: 'pytest --html=report.html --junitxml=report.xml'
@@ -73,7 +79,7 @@ node(params.NodeSelector) {
             }
         }
         stage("Create report") {
-            println("============================================ REPORT STAGE ==============================================")
+            println('======================================== REPORT STAGE ===========================================')
             try {
                 publishHTML (target: [
                         allowMissing: true,
@@ -94,7 +100,7 @@ node(params.NodeSelector) {
         }
     }
     stage('Clean') {
-        println("============================================== CLEAN STAGE ==============================================")
+        println('=========================================== CLEAN STAGE =============================================')
         try {
             sh label: 'Check workspace size', script: "du -sh $env.WORKSPACE"
             sh label: 'Clean workspace', script: "sudo rm -rf $env.WORKSPACE/*"
