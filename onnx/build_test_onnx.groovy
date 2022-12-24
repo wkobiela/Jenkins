@@ -26,7 +26,7 @@ node(params.NodeSelector) {
             }
         }
         stage('Clone ONNX') {
-            println'(======================================== CLONE ONNX STAGE =======================================')
+            println('======================================== CLONE ONNX STAGE =======================================')
             try {
                 sh label: 'Cloning ONNX repository', script: 'git clone https://github.com/onnx/onnx.git'
                 dir("$env.WORKSPACE/onnx") {
@@ -40,12 +40,12 @@ node(params.NodeSelector) {
             println('===================================== INSTALL PROTOBUF STAGE ====================================')
             try {
                 dir("$env.WORKSPACE/protobuf/build_source") {
-                    sh label: 'Cmake protobuf', script: 'cmake ../cmake 
-                                                        -Dprotobuf_BUILD_SHARED_LIBS=OFF 
-                                                        -DCMAKE_INSTALL_PREFIX=/usr 
-                                                        -DCMAKE_INSTALL_SYSCONFDIR=/etc 
-                                                        -DCMAKE_POSITION_INDEPENDENT_CODE=ON 
-                                                        -Dprotobuf_BUILD_TESTS=OFF 
+                    sh label: 'Cmake protobuf', script: 'cmake ../cmake \
+                                                        -Dprotobuf_BUILD_SHARED_LIBS=OFF \
+                                                        -DCMAKE_INSTALL_PREFIX=/usr \
+                                                        -DCMAKE_INSTALL_SYSCONFDIR=/etc \
+                                                        -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+                                                        -Dprotobuf_BUILD_TESTS=OFF \
                                                         -DCMAKE_BUILD_TYPE=Release'
                     sh label: 'Make protobuf', script: 'make -j$(nproc)'
                     sh label: 'Install protobuf', script: 'sudo make install'
