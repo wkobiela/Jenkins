@@ -78,21 +78,20 @@ node(params.NodeSelector) {
                 unstable("Test stage exited with exception $e")
             }
         }
-        stage("Create report") {
+        stage('Create report') {
             println('======================================== REPORT STAGE ===========================================')
             try {
-                publishHTML (target: [
+                publishHTML(target: [
                         allowMissing: true,
                         alwaysLinkToLastBuild: false,
                         keepAll: false,
-                        reportDir: "onnx",
+                        reportDir: 'onnx',
                         reportFiles: 'report.html',
-                        reportName: "Pytest Report"
+                        reportName: 'Pytest Report'
                 ])
                 dir("$env.WORKSPACE/onnx") {
                     junit skipPublishingChecks: true, testResults: '*.xml'
                 }
-
             }
             catch (Exception e) {
                 error "Stage failed with exception $e"
