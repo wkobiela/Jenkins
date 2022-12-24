@@ -1,7 +1,7 @@
 node(params.NodeSelector) {
     currentBuild.displayName = "#$env.BUILD_NUMBER node: $env.NODE_NAME"
     stage('Clean') {
-        println('============================================== CLEAN STAGE ==============================================')
+        println('============================================== CLEAN STAGE ==========================================')
         try {
             sh label: 'Check workspace size', script: "du -sh $env.WORKSPACE"
             sh label: 'Clean workspace', script: "sudo rm -rf $env.WORKSPACE/*"
@@ -21,9 +21,10 @@ node(params.NodeSelector) {
         }
     }
     stage('Login') {
-        println('============================================-= LOGIN STAGE ==============================================')
+        println('============================================ LOGIN STAGE ============================================')
         try {
-            withCredentials([usernamePassword(credentialsId: "$params.CredentialsUser", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+            withCredentials([usernamePassword
+            (credentialsId: "$params.CredentialsUser", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                 sh "echo $PASSWORD | docker login -u $USERNAME --password-stdin"
             }
         } catch (Exception e) {
@@ -31,7 +32,7 @@ node(params.NodeSelector) {
         }
     }
     stage('Clone') {
-        println('============================================== CLONE STAGE ==============================================')
+        println('============================================ CLONE STAGE ============================================')
         try {
             sh 'git clone https://github.com/wkobiela/Dockerfiles.git'
             dir("$env.WORKSPACE/Dockerfiles") {
@@ -42,7 +43,7 @@ node(params.NodeSelector) {
         }
     }
     stage('Build') {
-        println('============================================== BUILD STAGE ==============================================')
+        println('============================================ BUILD STAGE ============================================')
         try {
             dir("$env.WORKSPACE/Dockerfiles/$params.DockerfileDir") {
                 sh "docker buildx build --platform $params.Architectures ."
@@ -52,7 +53,7 @@ node(params.NodeSelector) {
         }
     }
     stage('Push image') {
-        println('============================================== PUSH STAGE ===============================================')
+        println('============================================ PUSH STAGE =============================================')
         try {
             dir("$env.WORKSPACE/Dockerfiles/$params.DockerfileDir") {
                 sh "docker buildx build --platform linux/amd64,linux/arm/v7 . --push -t $params.ImageName:latest"
@@ -62,15 +63,15 @@ node(params.NodeSelector) {
         }
     }
     stage('Remove image') {
-        println('============================================ REMOVE STAGE ===============================================')
+        println('========================================== REMOVE STAGE =============================================')
         try {
-            sh "echo y | docker buildx prune"
+            sh 'echo y | docker buildx prune'
         } catch (Exception e) {
             error "Stage failed with exception $e"
         }
     }
     stage('Clean') {
-        println('============================================== CLEAN STAGE ==============================================')
+        println('============================================ CLEAN STAGE ============================================')
         try {
             sh label: 'Check workspace size', script: "du -sh $env.WORKSPACE"
             sh label: 'Clean workspace', script: "sudo rm -rf $env.WORKSPACE/*"
