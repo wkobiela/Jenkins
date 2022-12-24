@@ -3,7 +3,23 @@ node(params.NodeSelector) {
     def image
     stage('Clean') {
         println("============================================== CLEAN STAGE ==============================================")
-        cleanWs()
+        try {
+            sh label: 'Check workspace size', script: "du -sh $env.WORKSPACE"
+            sh label: 'Clean workspace', script: "sudo rm -rf $env.WORKSPACE/*"
+            sh label: 'Check workspace size', script: "du -sh $env.WORKSPACE"
+        } catch (Exception e) {
+            error "Stage failed with exception $e"
+        }
+    }
+    stage('Prepare') {
+        try {
+            sh label: 'Run quemu image', script: 'docker run --rm --privileged multiarch/qemu-user-static --reset -p yes'
+            sh label: 'Remove old builder if it exists', script: 'docker buildx rm builder'
+            sh label: 'Create new builder', script: 'docker buildx create --name builder --driver docker-container --use'
+            sh lable: 'Run bootstrap to check available architectures', script: 'docker buildx inspect --bootstrap'
+        } catch (Exceptio e) {
+            error "Stage failed with exceptio $e"
+        }
     }
     stage('Login') {
         println("============================================-= LOGIN STAGE ==============================================")
@@ -56,6 +72,12 @@ node(params.NodeSelector) {
     }
     stage('Clean') {
         println("============================================== CLEAN STAGE ==============================================")
-        cleanWs()
+        try {
+            sh label: 'Check workspace size', script: "du -sh $env.WORKSPACE"
+            sh label: 'Clean workspace', script: "sudo rm -rf $env.WORKSPACE/*"
+            sh label: 'Check workspace size', script: "du -sh $env.WORKSPACE"
+        } catch (Exception e) {
+            error "Stage failed with exception $e"
+        }
     }
 }
