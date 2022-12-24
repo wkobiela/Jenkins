@@ -84,7 +84,7 @@ node(params.NodeSelector) {
                         reportName: "Pytest Report"
                 ])
                 dir("$env.WORKSPACE/onnx") {
-                    junit '*.xml'
+                    junit skipPublishingChecks: true, testResults: '*.xml'
                 }
 
             }
@@ -104,4 +104,3 @@ node(params.NodeSelector) {
         }
     }
 }
-
