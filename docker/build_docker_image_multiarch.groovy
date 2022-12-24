@@ -11,13 +11,14 @@ node(params.NodeSelector) {
         }
     }
     stage('Prepare') {
+        println('========================================== PREPARE STAGE ============================================')
         try {
             sh label: 'Quemu image', script: 'docker run --rm --privileged multiarch/qemu-user-static --reset -p yes'
             sh label: 'Remove old builder if it exists', script: 'docker buildx rm builder'
             sh label: 'New builder', script: 'docker buildx create --name builder --driver docker-container --use'
             sh lable: 'Run bootstrap to check available architectures', script: 'docker buildx inspect --bootstrap'
         } catch (Exception e) {
-            error "Stage failed with exceptio $e"
+            error "Stage failed with exception $e"
         }
     }
     stage('Login') {
