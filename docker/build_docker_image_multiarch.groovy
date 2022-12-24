@@ -16,7 +16,7 @@ node(params.NodeSelector) {
             sh label: 'Remove old builder if it exists', script: 'docker buildx rm builder'
             sh label: 'New builder', script: 'docker buildx create --name builder --driver docker-container --use'
             sh lable: 'Run bootstrap to check available architectures', script: 'docker buildx inspect --bootstrap'
-        } catch (Exceptio e) {
+        } catch (Exception e) {
             error "Stage failed with exceptio $e"
         }
     }
