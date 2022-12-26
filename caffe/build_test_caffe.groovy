@@ -15,7 +15,7 @@ node(params.NodeSelector) {
     }
 
     stage('Clean') {
-        println("============================================== CLEAN STAGE ==============================================")
+        println('========================================= CLEAN STAGE ===============================================')
         try {
             sh label: 'Check workspace size', script: "du -sh $env.WORKSPACE"
             sh label: 'Clean workspace', script: "sudo rm -rf $env.WORKSPACE/*"
@@ -24,10 +24,10 @@ node(params.NodeSelector) {
             error "Stage failed with exception $e"
         }
     }
-    println("========================================== STARTING CONTAINER ===========================================")
+    println('========================================== STARTING CONTAINER ===========================================')
     docker.image('wkobiela/caffe_build_base:latest').inside(" -v /etc/localtime:/etc/localtime:ro") {
         stage('Clone') {
-            println("========================================== CLONE STAGE ==========================================")
+            println('========================================== CLONE STAGE ==========================================')
             try {
                 sh 'git clone https://github.com/BVLC/caffe.git'
             } catch (Exception e) {
@@ -35,19 +35,22 @@ node(params.NodeSelector) {
             }
         }
         stage('Prepare') {
-            println("============================================= PREPARE STAGE ==============================================")
+            println('======================================== PREPARE STAGE ==========================================')
             try {
-                dir ("$env.WORKSPACE/caffe/build") {
-                    sh label: 'Execute cmake command', script: 'cmake .. -DBUILD_python=OFF -DBUILD_docs=OFF -DUSE_OPENCV=OFF'
+                dir("$env.WORKSPACE/caffe/build") {
+                    sh label: 'Execute cmake command', script: 'cmake .. \
+                                                                -DBUILD_python=OFF \
+                                                                -DBUILD_docs=OFF \
+                                                                -DUSE_OPENCV=OFF'
                 }
             } catch (Exception e) {
                 error "Stage failed with exception $e"
             }
         }
         stage('Build') {
-            println("============================================= BUILD STAGE ==============================================")
+            println('======================================== BUILD STAGE ============================================')
             try {
-                dir ("$env.WORKSPACE/caffe/build") {
+                dir("$env.WORKSPACE/caffe/build") {
                     sh label: 'Execute make all command', script: "make all -j${threads}"
                     sh label: 'Execute make install command', script: 'make install'
                 }
@@ -56,7 +59,7 @@ node(params.NodeSelector) {
             }
         }
         stage('Test') {
-            println("============================================== TEST STAGE ==============================================")
+            println('========================================== TEST STAGE ===========================================')
             try {
                 dir("$env.WORKSPACE/caffe/build") {
                     sh label: 'Run tests', script: "make runtest -j${threads}"
@@ -68,7 +71,7 @@ node(params.NodeSelector) {
         }
     }
     stage('Clean') {
-        println("============================================== CLEAN STAGE ==============================================")
+        println('========================================== CLEAN STAGE ==============================================')
         try {
             sh label: 'Check workspace size', script: "du -sh $env.WORKSPACE"
             sh label: 'Clean workspace', script: "sudo rm -rf $env.WORKSPACE/*"
