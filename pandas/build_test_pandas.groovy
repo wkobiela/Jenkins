@@ -65,16 +65,29 @@ node(params.NodeSelector) {
         }
         stage('Test') {
             println('========================================== TEST STAGE ===========================================')
-            try {
-                dir("$env.WORKSPACE/pandas") {
+            stages = [:]
+
+            stages['api_tests'] {
+                try {
+                    sh label: 'Run api tests', script: "pytest --skip-slow --skip-network --skip-db \
+                                                        $env.WORKSPACE/pandas/pandas/tests/api \
+                                                        --html=report_base.html --junitxml=report_base.xml"
+                }
+                catch (Exception e) {
+                    unstable("Test stage exited with exception $e")
+                }
+            }
+            stages['base_tests'] {
+                try {
                     sh label: 'Run base tests', script: "pytest --skip-slow --skip-network --skip-db \
                                                         $env.WORKSPACE/pandas/pandas/tests/base \
                                                         --html=report_base.html --junitxml=report_base.xml"
                 }
+                catch (Exception e) {
+                    unstable("Test stage exited with exception $e")
+                }
             }
-            catch (Exception e) {
-                unstable("Test stage exited with exception $e")
-            }
+            parallel(stages)
         }
         stage('Create report') {
             println('======================================== REPORT STAGE ===========================================')
