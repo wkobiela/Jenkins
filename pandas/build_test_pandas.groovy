@@ -68,7 +68,7 @@ node(params.NodeSelector) {
             try {
                 dir("$env.WORKSPACE/pandas") {
                     sh label: 'Run base tests', script: "pytest --skip-slow --skip-network --skip-db \
-                                                        /home/jenkins/pandas/pandas/tests/base \
+                                                        $env.WORKSPACE/pandas/pandas/tests/base \
                                                         --html=report_base.html --junitxml=report_base.xml"
                 }
             }
