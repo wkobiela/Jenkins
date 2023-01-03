@@ -1,3 +1,4 @@
+/* groovylint-disable NestedBlockDepth */
 node(params.NodeSelector) {
     currentBuild.displayName = "#$env.BUILD_NUMBER node: $env.NODE_NAME"
 
@@ -12,6 +13,8 @@ node(params.NodeSelector) {
     } else {
         println("Another variant & set threads: ${threads}")
     }
+
+    def testsArray = ['api', 'base', 'indexes', 'util']
 
     stage('Clean') {
         println('========================================= CLEAN STAGE ===============================================')
@@ -65,29 +68,22 @@ node(params.NodeSelector) {
         }
         stage('Test') {
             println('========================================== TEST STAGE ===========================================')
-            stages = [:]
-
-            stages['api_tests'] {
-                try {
-                    sh label: 'Run api tests', script: "pytest --skip-slow --skip-network --skip-db \
-                                                        $env.WORKSPACE/pandas/pandas/tests/api \
-                                                        --html=report_base.html --junitxml=report_base.xml"
-                }
-                catch (Exception e) {
-                    unstable("Test stage exited with exception $e")
-                }
-            }
-            stages['base_tests'] {
-                try {
-                    sh label: 'Run base tests', script: "pytest --skip-slow --skip-network --skip-db \
-                                                        $env.WORKSPACE/pandas/pandas/tests/base \
-                                                        --html=report_base.html --junitxml=report_base.xml"
-                }
-                catch (Exception e) {
-                    unstable("Test stage exited with exception $e")
+            def deployments = [:]
+            testsArray.each { e ->
+                deployments[e] = {
+                    stage(e) {
+                        try {
+                            sh label: "Run $e tests", script: "pytest --skip-slow --skip-network --skip-db \
+                                                            $env.WORKSPACE/pandas/pandas/tests/$e \
+                                                            --html=report_${e}.html --junitxml=report_${e}.xml"
+                        }
+                        catch (Exception ex) {
+                            unstable("Test stage exited with exception $ex")
+                        }
                 }
             }
-            parallel(stages)
+            }
+            parallel deployments
         }
         stage('Create report') {
             println('======================================== REPORT STAGE ===========================================')
@@ -96,11 +92,11 @@ node(params.NodeSelector) {
                         allowMissing: true,
                         alwaysLinkToLastBuild: false,
                         keepAll: false,
-                        reportDir: 'pandas',
+                        reportDir: "$WORKSPACE",
                         reportFiles: '*.html',
                         reportName: 'Pytest Report'
                 ])
-                dir("$env.WORKSPACE/pandas") {
+                dir("$env.WORKSPACE") {
                     junit skipPublishingChecks: true, testResults: '*.xml'
                 }
             }
