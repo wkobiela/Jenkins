@@ -24,7 +24,7 @@ node(params.NodeSelector) {
         }
     }
     println('========================================== STARTING CONTAINER ===========================================')
-    docker.image('wkobiela/caffe_build_base:latest').inside(' -v /etc/localtime:/etc/localtime:ro') {
+    docker.image('wkobiela/pandas_build_base:latest').inside(' -v /etc/localtime:/etc/localtime:ro') {
         stage('Clone') {
             println('========================================== CLONE STAGE ==========================================')
             try {
