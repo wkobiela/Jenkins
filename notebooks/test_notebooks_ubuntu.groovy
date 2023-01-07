@@ -1,6 +1,6 @@
 /* groovylint-disable Indentation, NestedBlockDepth */
 node(params.NodeSelector) {
-    currentBuild.displayName = "#$env.BUILD_NUMBER node: $env.NODE_NAME python: $params.PythonVersion"
+    currentBuild.displayName = "#$env.BUILD_NUMBER $env.JOB_NAME python: $params.PythonVersion"
 
     stage('Clean_start') {
         stage_log('CLEAN_START')
