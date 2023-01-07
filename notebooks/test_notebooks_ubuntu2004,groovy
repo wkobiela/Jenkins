@@ -17,8 +17,8 @@ node(params.NodeSelector) {
             stage('Copy CT files') {
                 stage_log('COPY CT FILES')
                 dir("$env.WORKSPACE/openvino_notebooks") {
-                    sh 'curl -O https://storage.openvinotoolkit.org/data/test_data\
-                    /openvino_notebooks/kits19/case_00030.zip'
+                    sh 'curl -O \
+                    https://storage.openvinotoolkit.org/data/test_data/openvino_notebooks/kits19/case_00030.zip'
                     sh 'mkdir notebooks/110-ct-segmentation-quantize/kits19'
                     sh 'mkdir notebooks/110-ct-segmentation-quantize/kits19/kits19_frames'
                     sh 'unzip case_00030.zip'
@@ -90,7 +90,7 @@ node(params.NodeSelector) {
                         alwaysLinkToLastBuild: false,
                         keepAll: false,
                         reportDir: 'openvino_notebooks/test_report',
-                        reportFiles: "${dir('openvino_notebooks/test_report') 
+                        reportFiles: "${dir('openvino_notebooks/test_report') \
                         { findFiles(glob: '**/*.html').join(',') ?: 'Not found' }}",
                         reportName: 'Pytest Report'
                         ])
