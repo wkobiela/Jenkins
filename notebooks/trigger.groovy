@@ -1,6 +1,6 @@
-def pythons = ['3.7', '3.8', '3.9', '3.10']
-def os = ['Ubuntu22', 'Ubuntu20']
-def parallelStagesMap = [:]
+def pythons = Eval.me(params.PythonsArray)
+def os = Eval.me(params.OsArray)
+parallelStagesMap = [:]
 
 pythons.each { p ->
     os.each { o ->
@@ -13,7 +13,8 @@ def generateStage(python, os) {
         stage("Stage: ${os} Python${python}") {
             build job: "${os}",
             parameters: [string(name: 'NodeSelector', value: 'amd64'),
-                        string(name: 'PythonVersion', value: "${python}")],
+                        string(name: 'PythonVersion', value: "${python}"),
+                        string(name: 'TestOptions', value: "${params.TestOptions}")],
             wait: true
         }
     }
@@ -31,4 +32,3 @@ pipeline {
         }
     }
 }
-
