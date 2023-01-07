@@ -1,6 +1,6 @@
 /* groovylint-disable Indentation, NestedBlockDepth */
 node(params.NodeSelector) {
-    currentBuild.displayName = "#$env.BUILD_NUMBER $env.JOB_NAME python: $params.PythonVersion"
+    currentBuild.displayName = "#$env.BUILD_NUMBER $env.JOB_BASE_NAME python: $params.PythonVersion"
 
     stage('Clean_start') {
         stage_log('CLEAN_START')
@@ -62,19 +62,19 @@ node(params.NodeSelector) {
                 try {
                     dir("$env.WORKSPACE/openvino_notebooks") {
                         sh ". openvino_env/bin/activate && python .ci/validate_notebooks.py \
-                        ${params.TestOptions} --report_dir test_report/${JOB_NAME}_${params.PythonVersion}"
+                        ${params.TestOptions} --report_dir test_report/${JOB_BASE_NAME}_${params.PythonVersion}"
                     }
             } catch (Exception ex) {
                     unstable("Test stage exited with exception $ex")
             } finally {
                 stage('Create report') {
                     stage_log('REPORT')
-                    sh "ls -ll openvino_notebooks/test_report/${JOB_NAME}_${params.PythonVersion}"
+                    sh "ls -ll openvino_notebooks/test_report/${JOB_BASE_NAME}_${params.PythonVersion}"
                     publishHTML(target: [
                         allowMissing: true,
                         alwaysLinkToLastBuild: false,
                         keepAll: false,
-                        reportDir: "openvino_notebooks/test_report/${JOB_NAME}_${params.PythonVersion}",
+                        reportDir: "openvino_notebooks/test_report/${JOB_BASE_NAME}_${params.PythonVersion}",
                         reportFiles: '**/*.html',
                         reportName: 'Pytest Report'
                         ])
