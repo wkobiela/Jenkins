@@ -62,8 +62,7 @@ node(params.NodeSelector) {
                 try {
                     dir("$env.WORKSPACE/openvino_notebooks") {
                         sh ". openvino_env/bin/activate && python .ci/validate_notebooks.py \
-                        --ignore_list 225-stable-diffusion-text-to-image \
-                        --report_dir test_report/${JOB_NAME}_${params.PythonVersion}"
+                        ${params.TestOptions} --report_dir test_report/${JOB_NAME}_${params.PythonVersion}"
                     }
             } catch (Exception ex) {
                     unstable("Test stage exited with exception $ex")
@@ -82,7 +81,7 @@ node(params.NodeSelector) {
                     }
                 stage('Archive artifacts') {
                     stage_log('ARCHIVE')
-                    archiveArtifacts(allowEmptyArchive: true, artifacts: '**/*.csv')
+                    archiveArtifacts(allowEmptyArchive: true, artifacts: 'openvino_notebooks/test_report/**/*.csv')
                     }
                 }
             }
