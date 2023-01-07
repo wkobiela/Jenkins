@@ -1,5 +1,5 @@
 def pythons = ['3.7', '3.8', '3.9', '3.10']
-def os = ['Ubuntu22']
+def os = ['Ubuntu22', 'Ubuntu20']
 def parallelStagesMap = [:]
 
 pythons.each { p ->

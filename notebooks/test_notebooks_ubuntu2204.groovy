@@ -1,3 +1,4 @@
+/* groovylint-disable Indentation, NestedBlockDepth */
 node(params.NodeSelector) {
     currentBuild.displayName = "#$env.BUILD_NUMBER node: $env.NODE_NAME python: $params.PythonVersion"
 
@@ -85,18 +86,18 @@ node(params.NodeSelector) {
                 stage('Create report') {
                     stage_log('REPORT')
                     publishHTML(target: [
-                    allowMissing: true,
-                    alwaysLinkToLastBuild: false,
-                    keepAll: false,
-                    reportDir: "openvino_notebooks/test_report",
-                    reportFiles: "${dir('openvino_notebooks/test_report') 
-                    { findFiles(glob: '**/*.html').join(',') ?: 'Not found' }}",
-                    reportName: 'Pytest Report'
-            ])
-                    }
+                        allowMissing: true,
+                        alwaysLinkToLastBuild: false,
+                        keepAll: false,
+                        reportDir: 'openvino_notebooks/test_report',
+                        reportFiles: "${dir('openvino_notebooks/test_report') 
+                        { findFiles(glob: '**/*.html').join(',') ?: 'Not found' }}",
+                        reportName: 'Pytest Report'
+                        ])
                     }
                 }
             }
+        }
     } catch (Exception e) {
         error "Exception message: $e"
     } finally {
