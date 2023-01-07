@@ -15,6 +15,12 @@ node(params.NodeSelector) {
                 stage_log('CLONE')
                 sh 'git clone https://github.com/openvinotoolkit/openvino_notebooks.git'
             }
+            stage('Get changed files') {
+                stage_log('GET CHANGED FILES')
+                dir("$WORKSPACE/openvino_notebooks") {
+                    sh 'git diff --name-only HEAD~1 HEAD > test_notebooks.txt'
+                }
+            }
             stage('Check cache') {
                 stage_log('CHECK CACHE')
                 dir("$WORKSPACE/cache") {
