@@ -12,8 +12,7 @@ def generateStage(python, os) {
     return {
         stage("Stage: ${os} Python${python}") {
             build job: "${os}",
-            parameters: [string(name: 'NodeSelector', value: 'amd64'),
-                        string(name: 'PythonVersion', value: "${python}"),
+            parameters: [string(name: 'PythonVersion', value: "${python}"),
                         string(name: 'TestOptions', value: "${params.TestOptions}")],
             wait: true
         }
