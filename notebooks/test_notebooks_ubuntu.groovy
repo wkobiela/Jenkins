@@ -19,6 +19,7 @@ node(params.NodeSelector) {
                 stage_log('GET CHANGED FILES')
                 dir("$WORKSPACE/openvino_notebooks") {
                     sh 'git diff --name-only HEAD~1 HEAD > test_notebooks.txt'
+                    sh label: 'Show changed files', script: 'cat test_notebooks.txt'
                 }
             }
             stage('Check cache') {
