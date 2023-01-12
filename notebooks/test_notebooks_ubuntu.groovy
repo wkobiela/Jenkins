@@ -1,11 +1,10 @@
-/* groovylint-disable CompileStatic, Indentation, NestedBlockDepth */
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
+/* groovylint-disable CompileStatic, Indentation, NestedBlockDepth, NoJavaUtilDate */
+import java.text.SimpleDateFormat
 
-DateTimeFormatter formatter = DateTimeFormatter.ofPattern('yyyy-MM-dd HH:mm:ss')
-ZonedDateTime zdt = ZonedDateTime.now()
+Date date = new Date()
+SimpleDateFormat sdf = new SimpleDateFormat('yyyy-MM-dd HH:mm:ss', Locale.default)
 if (params.CheckoutDate == '') {
-    formatted_date = formatter.format(zdt)
+    formatted_date = sdf.format(date)
 } else {
     formatted_date = params.CheckoutDate
 }
