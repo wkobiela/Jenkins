@@ -2,11 +2,12 @@
 import java.text.SimpleDateFormat
 
 Date date = new Date()
-SimpleDateFormat sdf = new SimpleDateFormat('yyyy-MM-dd HH:mm:ss', Locale.default)
+SimpleDateFormat sdf = new SimpleDateFormat('yyyy-MM-dd HH:mm:ss Z', Locale.default)
+SimpleDateFormat timeZone = new SimpleDateFormat('Z', Locale.default)
 if (params.CheckoutDate == '') {
-    formatted_date = sdf.format(date)
+    formatted_date = "${sdf.format(date)}"
 } else {
-    formatted_date = params.CheckoutDate
+    formatted_date = "${params.CheckoutDate} ${timeZone.format(date)}"
 }
 
 node(params.NodeSelector) {
@@ -24,7 +25,8 @@ node(params.NodeSelector) {
             stage_log('CLONE')
             bat label: 'Clone repository', script: 'git clone https://github.com/openvinotoolkit/openvino_notebooks.git'
             dir("$WORKSPACE/openvino_notebooks") {
-                    bat """git checkout `git rev-list -n 1 --before="$formatted_date" main`"""
+                    String s = bat(script: """@git rev-list -n 1 --before="$formatted_date" main""", returnStdout: true)
+                    bat label: "Checkout to $formatted_date, $s", script: "git checkout $s"
                 }
         }
         stage('Get changed files') {

@@ -2,11 +2,12 @@
 import java.text.SimpleDateFormat
 
 Date date = new Date()
-SimpleDateFormat sdf = new SimpleDateFormat('yyyy-MM-dd HH:mm:ss', Locale.default)
+SimpleDateFormat sdf = new SimpleDateFormat('yyyy-MM-dd HH:mm:ss Z', Locale.default)
+SimpleDateFormat timeZone = new SimpleDateFormat('Z', Locale.default)
 if (params.CheckoutDate == '') {
-    formatted_date = sdf.format(date)
+    formatted_date = "${sdf.format(date)}"
 } else {
-    formatted_date = params.CheckoutDate
+    formatted_date = "${params.CheckoutDate} ${timeZone.format(date)}"
 }
 
 node(params.NodeSelector) {
