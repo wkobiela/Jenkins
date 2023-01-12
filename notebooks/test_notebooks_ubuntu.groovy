@@ -1,10 +1,10 @@
-import java.text.SimpleDateFormat
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
-def date = new Date()
-def sdf = new SimpleDateFormat('yyyy-MM-dd HH:mm:ss')
-
+DateTimeFormatter formatter = DateTimeFormatter.ofPattern('yyyy-MM-dd HH:mm:ss')
+ZonedDateTime zdt = ZonedDateTime.now()
 if (params.CheckoutDate == '') {
-    formatted_date = sdf.format(date)
+    formatted_date = formatter.format(zdt)
 } else {
     formatted_date = params.CheckoutDate
 }
