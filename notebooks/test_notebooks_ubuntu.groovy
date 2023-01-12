@@ -1,3 +1,4 @@
+/* groovylint-disable CompileStatic, Indentation, NestedBlockDepth */
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
@@ -9,7 +10,6 @@ if (params.CheckoutDate == '') {
     formatted_date = params.CheckoutDate
 }
 
-/* groovylint-disable Indentation, NestedBlockDepth */
 node(params.NodeSelector) {
     currentBuild.displayName = "#$env.BUILD_NUMBER $env.JOB_BASE_NAME python: $params.PythonVersion"
 
