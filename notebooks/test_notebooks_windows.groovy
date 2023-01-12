@@ -1,4 +1,14 @@
-/* groovylint-disable Indentation, NestedBlockDepth */
+/* groovylint-disable CompileStatic, Indentation, NestedBlockDepth, NoJavaUtilDate */
+import java.text.SimpleDateFormat
+
+Date date = new Date()
+SimpleDateFormat sdf = new SimpleDateFormat('yyyy-MM-dd HH:mm:ss', Locale.default)
+if (params.CheckoutDate == '') {
+    formatted_date = sdf.format(date)
+} else {
+    formatted_date = params.CheckoutDate
+}
+
 node(params.NodeSelector) {
     currentBuild.displayName = "#$env.BUILD_NUMBER $env.JOB_BASE_NAME python: $params.PythonVersion"
 
@@ -13,6 +23,9 @@ node(params.NodeSelector) {
         stage('Clone') {
             stage_log('CLONE')
             bat label: 'Clone repository', script: 'git clone https://github.com/openvinotoolkit/openvino_notebooks.git'
+            dir("$WORKSPACE/openvino_notebooks") {
+                    bat """git checkout `git rev-list -n 1 --before="$formatted_date" main`"""
+                }
         }
         stage('Get changed files') {
             stage_log('GET CHANGED FILES')
