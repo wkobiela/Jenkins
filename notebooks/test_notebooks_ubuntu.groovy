@@ -1,3 +1,14 @@
+import java.text.SimpleDateFormat
+
+def date = new Date()
+def sdf = new SimpleDateFormat('yyyy-MM-dd HH:mm:ss')
+
+if (params.CheckoutDate == '') {
+    formatted_date = sdf.format(date)
+} else {
+    formatted_date = params.CheckoutDate
+}
+
 /* groovylint-disable Indentation, NestedBlockDepth */
 node(params.NodeSelector) {
     currentBuild.displayName = "#$env.BUILD_NUMBER $env.JOB_BASE_NAME python: $params.PythonVersion"
@@ -14,6 +25,9 @@ node(params.NodeSelector) {
             stage('Clone') {
                 stage_log('CLONE')
                 sh 'git clone https://github.com/openvinotoolkit/openvino_notebooks.git'
+                dir("$WORKSPACE/openvino_notebooks") {
+                    sh """git checkout `git rev-list -n 1 --before="$formatted_date" main`"""
+                }
             }
             stage('Get changed files') {
                 stage_log('GET CHANGED FILES')
