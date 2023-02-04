@@ -14,8 +14,20 @@ node(params.NodeSelector) {
         println('========================================== PREPARE STAGE ============================================')
         try {
             sh label: 'Quemu image', script: 'docker run --rm --privileged multiarch/qemu-user-static --reset -p yes'
+        } catch (Exception e) {
+            println "Something went wrong, but trying anyways. MSG: $e"
+        }
+        try {
             sh label: 'Remove old builder if it exists', script: 'docker buildx rm builder'
+        } catch (Exception e) {
+            println "Something went wrong, but trying anyways. MSG: $e"
+        }
+        try {
             sh label: 'New builder', script: 'docker buildx create --name builder --driver docker-container --use'
+        } catch (Exception e) {
+            println "Something went wrong, but trying anyways. MSG: $e"
+        }
+        try {
             sh label: 'Run bootstrap to check available architectures', script: 'docker buildx inspect --bootstrap'
         } catch (Exception e) {
             println "Something went wrong, but trying anyways. MSG: $e"
