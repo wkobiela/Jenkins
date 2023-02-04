@@ -18,7 +18,7 @@ node(params.NodeSelector) {
             sh label: 'New builder', script: 'docker buildx create --name builder --driver docker-container --use'
             sh label: 'Run bootstrap to check available architectures', script: 'docker buildx inspect --bootstrap'
         } catch (Exception e) {
-            error "Stage failed with exception $e"
+            println "Something went wrong, but trying anyways. MSG: $e"
         }
     }
     stage('Login') {
