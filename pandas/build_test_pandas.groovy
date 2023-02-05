@@ -44,7 +44,8 @@ node(params.NodeSelector) {
                     pytest-html \
                     --cache-dir $WORKSPACE/cache"
 
-                    sh label: 'Install requirements', script: 'python3 -m pip install -r requirements-dev.txt'
+                    sh label: 'Install requirements', script: "python3 -m pip install -r requirements-dev.txt \
+                    --cache-dir $WORKSPACE/cache"
                 }
             } catch (Exception e) {
                 error "Stage failed with exception $e"
