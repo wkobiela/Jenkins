@@ -27,7 +27,8 @@ node(params.NodeSelector) {
         }
     }
     println('========================================== STARTING CONTAINER ===========================================')
-    docker.image('wkobiela/pandas_build_base:latest').inside(' -v /etc/localtime:/etc/localtime:ro') {
+    docker.image('wkobiela/pandas_build_base:latest').inside(" -v /etc/localtime:/etc/localtime:ro \
+                                                            -v /home/jenkins/workspace/cache:$WORKSPACE/cache") {
         stage('Clone') {
             println('========================================== CLONE STAGE ==========================================')
             try {
@@ -40,13 +41,14 @@ node(params.NodeSelector) {
             println('======================================== PREPARE STAGE ==========================================')
             try {
                 dir("$env.WORKSPACE/pandas") {
-                    sh label: 'Install additional requirements', script: 'python3 -m pip install \
+                    sh label: 'Install additional requirements', script: "python3 -m pip install \
                     pytest \
                     hypothesis \
                     cython numexpr \
                     bottleneck tables \
                     tabulate \
-                    pytest-html'
+                    pytest-html \
+                    --cache-dir $WORKSPACE/cache"
 
                     sh label: 'Install requirements', script: 'python3 -m pip install -r requirements-dev.txt'
                 }
