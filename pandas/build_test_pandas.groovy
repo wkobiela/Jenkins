@@ -18,13 +18,7 @@ node(params.NodeSelector) {
 
     stage('Clean') {
         println('========================================= CLEAN STAGE ===============================================')
-        try {
-            sh label: 'Check workspace size', script: "du -sh $env.WORKSPACE"
-            sh label: 'Clean workspace', script: "sudo rm -rf $env.WORKSPACE/*"
-            sh label: 'Check workspace size', script: "du -sh $env.WORKSPACE"
-        } catch (Exception e) {
-            error "Stage failed with exception $e"
-        }
+        clean_workspace()
     }
     println('========================================== STARTING CONTAINER ===========================================')
     docker.image('wkobiela/pandas_build_base:latest').inside(" -v /etc/localtime:/etc/localtime:ro \
@@ -109,12 +103,6 @@ node(params.NodeSelector) {
     }
     stage('Clean') {
         println('========================================== CLEAN STAGE ==============================================')
-        try {
-            sh label: 'Check workspace size', script: "du -sh $env.WORKSPACE"
-            sh label: 'Clean workspace', script: "sudo rm -rf $env.WORKSPACE/*"
-            sh label: 'Check workspace size', script: "du -sh $env.WORKSPACE"
-        } catch (Exception e) {
-            error "Stage failed with exception $e"
-        }
+        clean_workspace()
     }
 }
