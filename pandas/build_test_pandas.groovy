@@ -106,3 +106,13 @@ node(params.NodeSelector) {
         clean_workspace()
     }
 }
+
+void clean_workspace() {
+    try {
+        sh label: 'Check workspace size', script: "du -sh $env.WORKSPACE"
+        sh label: 'Clean workspace', script: "sudo rm -rf $env.WORKSPACE/*"
+        sh label: 'Check workspace size - postclean', script: "du -sh $env.WORKSPACE"
+    } catch (Exception e) {
+        error "Stage failed with exception $e"
+    }
+}
