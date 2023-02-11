@@ -26,14 +26,16 @@ def generateStage(python, os) {
 }
 
 def statusUpdate(status) {
-    if (params.propagateStatus) {
-        withCredentials([string(credentialsId: 'github_openvino_notebooks_token', variable: 'TOKEN')]) {
-            sh label: 'Update Github actions status',
-            script: """curl "https://api.github.com/repos/wkobiela/openvino_notebooks/statuses/${params.Commit}" \
+    cmd = """curl "https://api.github.com/repos/wkobiela/openvino_notebooks/statuses/${params.Commit}" \
             -H "Content-Type: application/json" \
             -H 'Authorization: token ${TOKEN}' \
             -X POST \
             -d "{\"state\": \"${status}\",\"context\": \"${env.JOB_BASE_NAME}\", \"description\": \"Jenkins\", \"target_url\": \"${env.BUILD_URL}\"}\""""
+    println(cmd)
+    if (params.propagateStatus) {
+        withCredentials([string(credentialsId: 'github_openvino_notebooks_token', variable: 'TOKEN')]) {
+            sh label: 'Update Github actions status',
+            script: cmd
         }
     } else {
         println("Propagate status is disabled.")
