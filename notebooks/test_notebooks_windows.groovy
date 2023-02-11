@@ -115,10 +115,10 @@ node(params.NodeSelector) {
             stage_log('CLEAN_FIN')
             cleanWs()
         }
-        if (currentBuild.result == 'SUCCESS') {
-            statusUpdate('success')
+        if (currentBuild.result == 'FAILURE' || currentBuild.result == 'UNSTABLE' || currentBuild.result == 'ABORTED') {
+            statusUpdate('failure')
         } else {
-            statusUpdate('error')
+            statusUpdate('success')
         }
     }
 }

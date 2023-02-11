@@ -92,7 +92,7 @@ pipeline {
         }
         failure {
             node('linux') {
-                statusUpdate('error')
+                statusUpdate('failure')
             }
         }
     }
