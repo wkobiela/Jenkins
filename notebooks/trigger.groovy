@@ -33,7 +33,7 @@ pipeline {
             steps {
                 script {
                     String changedFiles = sh(returnStdout: true, label: "Get changed files", script: """wget -qO- \
-                    http://api.github.com/repos/openvinotoolkit/openvino_notebooks/commits/$commit \
+                    http://api.github.com/repos/wkobiela/openvino_notebooks/commits/$commit \
                     | jq -r '.files | .[] | .filename'""")
                     if (changedFiles.contains('ipynb')) {
                         println("Files changed: ${changedFiles}")
