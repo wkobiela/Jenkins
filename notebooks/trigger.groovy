@@ -40,9 +40,9 @@ pipeline {
                     else if (changedFiles.contains('requirements.txt')) {
                         println("Files changed: $changedFiles")
                     } else {
+                        println("Files changed: $changedFiles")
                         currentBuild.result = 'SUCCESS'
-                        println("Files changed: $changedFiles, no tests needed.")
-                        return
+                        error('No tests needed.')
                     }
                 }
             }
