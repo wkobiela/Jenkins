@@ -175,7 +175,6 @@ def statusUpdate(status) {
             -X POST \
             -d "{\\"state\\": \\"${status}\\",\\"context\\": \\"${statusName}\\", \
             \\"description\\": \\"Jenkins\\", \\"target_url\\": \\"${env.BUILD_URL}\\"}\""""
-            println(cmd)
             sh label: 'Update Github actions status', script: cmd
         }
     } else {

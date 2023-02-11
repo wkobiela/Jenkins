@@ -17,7 +17,6 @@ node(params.NodeSelector) {
             stage_log('CLONE')
             bat label: 'Clone repository', script: 'git clone https://github.com/wkobiela/openvino_notebooks.git'
             dir("$WORKSPACE/openvino_notebooks") {
-                    // String s = bat(script: """@git rev-list -n 1 --before="$formatted_date" main""", returnStdout: true)
                     bat label: "Checkout to $commit", script: "git checkout $commit"
                 }
         }
@@ -171,7 +170,6 @@ def statusUpdate(status) {
             -X POST \
             -d "{\\"state\\": \\"${status}\\",\\"context\\": \\"${statusName}\\", \
             \\"description\\": \\"Jenkins\\", \\"target_url\\": \\"${env.BUILD_URL}\\"}\""""
-            println(cmd)
             bat label: 'Update Github actions status', script: cmd
         }
     } else {
