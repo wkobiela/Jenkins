@@ -3,7 +3,7 @@ def pythons = Eval.me(params.PythonsArray)
 def os = Eval.me(params.OsArray)
 parallelStagesMap = [:]
 commit = params.Commit ?: 'main'
-runTests = False
+runTests = false
 
 pythons.each { p ->
     os.each { o ->
@@ -37,11 +37,11 @@ pipeline {
                     | jq -r '.files | .[] | select(.status == "modified") | .filename'""")
                     if (changedFiles.contains('ipynb')) {
                         println("Files changed: $changedFiles")
-                        runTests = True
+                        runTests = true
                     }
                     else if (changedFiles.contains('requirements.txt')) {
                         println("Files changed: $changedFiles")
-                        runTests = True
+                        runTests = true
                     } else {
                         println("Files changed: $changedFiles")
                         currentBuild.result = 'SUCCESS'
@@ -54,7 +54,7 @@ pipeline {
             agent none
                 when {
                     expression {
-                        runTests = True
+                        runTests = true
                     }
                 }
             steps {
