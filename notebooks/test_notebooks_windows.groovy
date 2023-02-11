@@ -7,6 +7,7 @@ node(params.NodeSelector) {
     String pythonVersion = params.PythonVersion.replaceAll('\\.', '')
 
     stage('Clean_start') {
+        statusUpdate('pending')
         stage_log('CLEAN_START')
         cleanWs()
     }

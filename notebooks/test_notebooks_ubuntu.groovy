@@ -6,6 +6,7 @@ node(params.NodeSelector) {
     statusName = "$env.JOB_BASE_NAME python: $params.PythonVersion"
 
     stage('Clean_start') {
+        statusUpdate('pending')
         stage_log('CLEAN_START')
         clean_workspace()
     }
