@@ -33,8 +33,7 @@ def statusUpdate(status) {
             -H "Content-Type: application/json" \
             -H 'Authorization: token ${TOKEN}' \
             -X POST \
-            -d "{\"state\": \"${status}\",\"context\": \"${env.JOB_BASE_NAME}\", \
-            \"description\": \"Jenkins\", \"target_url\": \"${env.BUILD_URL}\"}\""""
+            -d "{\"state\": \"${status}\",\"context\": \"${env.JOB_BASE_NAME}\", \"description\": \"Jenkins\", \"target_url\": \"${env.BUILD_URL}\"}\""""
         }
     } else {
         println("Propagate status is disabled.")
