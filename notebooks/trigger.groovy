@@ -82,13 +82,16 @@ pipeline {
                 }
             }
         }
-        post {
-            success {
-                statusUpdate("success")
-            }
-            failure {
-                statusUpdate("failure")
-            }
+    }
+    post {
+        agent {
+            label 'linux'
+        }
+        success {
+            statusUpdate("success")
+        }
+        failure {
+            statusUpdate("failure")
         }
     }
 }
