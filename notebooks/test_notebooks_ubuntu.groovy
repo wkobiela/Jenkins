@@ -17,7 +17,7 @@ node(params.NodeSelector) {
                                                     -v /home/jenkins/workspace/cache:$WORKSPACE/cache") {
             stage('Clone') {
                 stage_log('CLONE')
-                sh 'git clone https://github.com/openvinotoolkit/openvino_notebooks.git'
+                sh 'git clone https://github.com/wkobiela/openvino_notebooks.git'
                 dir("$WORKSPACE/openvino_notebooks") {
                     sh "git checkout $commit"
                 }
@@ -110,7 +110,7 @@ node(params.NodeSelector) {
         if (currentBuild.result == 'SUCCESS') {
             statusUpdate('success')
         } else {
-            statusUpdate('failure')
+            statusUpdate('error')
         }
     }
 }
@@ -169,12 +169,13 @@ void reuseCachedFiles() {
 def statusUpdate(status) {
     if (params.propagateStatus) {
         withCredentials([string(credentialsId: 'github_openvino_notebooks_token', variable: 'TOKEN')]) {
-            cmd = """set +x curl "https://api.github.com/repos/wkobiela/openvino_notebooks/statuses/${params.Commit}" \
+            cmd = """curl "https://api.github.com/repos/wkobiela/openvino_notebooks/statuses/${params.Commit}" \
             -H "Content-Type: application/json" \
-            -H 'Authorization: token ${TOKEN}' \
+            -H "Authorization: token ${TOKEN}" \
             -X POST \
             -d "{\\"state\\": \\"${status}\\",\\"context\\": \\"${statusName}\\", \
             \\"description\\": \\"Jenkins\\", \\"target_url\\": \\"${env.BUILD_URL}\\"}\""""
+            println(cmd)
             sh label: 'Update Github actions status', script: cmd
         }
     } else {

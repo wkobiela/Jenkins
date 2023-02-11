@@ -15,7 +15,7 @@ node(params.NodeSelector) {
     try {
         stage('Clone') {
             stage_log('CLONE')
-            bat label: 'Clone repository', script: 'git clone https://github.com/openvinotoolkit/openvino_notebooks.git'
+            bat label: 'Clone repository', script: 'git clone https://github.com/wkobiela/openvino_notebooks.git'
             dir("$WORKSPACE/openvino_notebooks") {
                     // String s = bat(script: """@git rev-list -n 1 --before="$formatted_date" main""", returnStdout: true)
                     bat label: "Checkout to $commit", script: "git checkout $commit"
@@ -118,7 +118,7 @@ node(params.NodeSelector) {
         if (currentBuild.result == 'SUCCESS') {
             statusUpdate('success')
         } else {
-            statusUpdate('failure')
+            statusUpdate('error')
         }
     }
 }
@@ -167,10 +167,11 @@ def statusUpdate(status) {
         withCredentials([string(credentialsId: 'github_openvino_notebooks_token', variable: 'TOKEN')]) {
             cmd = """curl "https://api.github.com/repos/wkobiela/openvino_notebooks/statuses/${params.Commit}" \
             -H "Content-Type: application/json" \
-            -H 'Authorization: token ${TOKEN}' \
+            -H "Authorization: token ${TOKEN}" \
             -X POST \
             -d "{\\"state\\": \\"${status}\\",\\"context\\": \\"${statusName}\\", \
             \\"description\\": \\"Jenkins\\", \\"target_url\\": \\"${env.BUILD_URL}\\"}\""""
+            println(cmd)
             bat label: 'Update Github actions status', script: cmd
         }
     } else {
