@@ -18,7 +18,7 @@ def generateStage(python, os) {
             parameters: [string(name: 'Commit', value: "${params.Commit}"),
                         string(name: 'PythonVersion', value: "${python}"),
                         string(name: 'TestOptions', value: "${params.TestOptions}"),
-                        string(name: 'propagateStatus', value: Boolean.valueOf(propagateStatus))
+                        booleanParam(name: 'propagateStatus', value: Boolean.valueOf(params.propagateStatus))
                         ],
             wait: true
         }
