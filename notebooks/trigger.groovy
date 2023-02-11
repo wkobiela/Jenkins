@@ -34,7 +34,7 @@ pipeline {
                 script {
                     String changedFiles = sh(returnStdout: true, label: "Get changed files", script: """wget -qO- \
                     http://api.github.com/repos/openvinotoolkit/openvino_notebooks/commits/$commit \
-                    | jq -r '.files | .[] | select(.status == "modified") | .filename'""")
+                    | jq -r '.files | .[] | .filename'""")
                     if (changedFiles.contains('ipynb')) {
                         println("Files changed: ${changedFiles}")
                         runTests = true
