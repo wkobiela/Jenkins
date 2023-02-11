@@ -3,7 +3,7 @@ commit = params.Commit ?: 'main'
 
 node(params.NodeSelector) {
     currentBuild.displayName = "#$env.BUILD_NUMBER $env.JOB_BASE_NAME python: $params.PythonVersion"
-
+    statusName = "$env.JOB_BASE_NAME python: $params.PythonVersion"
     String pythonVersion = params.PythonVersion.replaceAll('\\.', '')
 
     stage('Clean_start') {
@@ -114,6 +114,11 @@ node(params.NodeSelector) {
             stage_log('CLEAN_FIN')
             cleanWs()
         }
+        if (currentBuild.result == 'SUCCESS') {
+            statusUpdate('success')
+        } else {
+            statusUpdate('failure')
+        }
     }
 }
 
@@ -154,7 +159,20 @@ void reuseCachedFiles() {
     bat "copy $WORKSPACE\\..\\cache\\meter_seg_model.tar.gz 203-meter-reader\\model\\meter_seg_model.tar.gz"
     bat "copy $WORKSPACE\\..\\cache\\ch_PP-OCRv3_det_infer.tar 405-paddle-ocr-webcam\\model\\ch_PP-OCRv3_det_infer.tar"
     bat "copy $WORKSPACE\\..\\cache\\ch_PP-OCRv3_rec_infer.tar 405-paddle-ocr-webcam\\model\\ch_PP-OCRv3_rec_infer.tar"
-// bat label: 'Check files existance', script: 'ls -l 110-ct-segmentation-quantize/kits19/kits19_frames \
-//                                             && ls -l 203-meter-reader/model/ \
-//                                             && ls -l 405-paddle-ocr-webcam/model'
+}
+
+def statusUpdate(status) {
+    if (params.propagateStatus) {
+        withCredentials([string(credentialsId: 'github_openvino_notebooks_token', variable: 'TOKEN')]) {
+            cmd = """curl "https://api.github.com/repos/wkobiela/openvino_notebooks/statuses/${params.Commit}" \
+            -H "Content-Type: application/json" \
+            -H 'Authorization: token ${TOKEN}' \
+            -X POST \
+            -d "{\\"state\\": \\"${status}\\",\\"context\\": \\"${statusName}\\", \
+            \\"description\\": \\"Jenkins\\", \\"target_url\\": \\"${env.BUILD_URL}\\"}\""""
+            bat label: 'Update Github actions status', script: cmd
+        }
+    } else {
+        println('Propagate status is disabled.')
+    }
 }

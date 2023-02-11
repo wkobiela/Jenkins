@@ -3,6 +3,7 @@ commit = params.Commit ?: 'main'
 
 node(params.NodeSelector) {
     currentBuild.displayName = "#$env.BUILD_NUMBER $env.JOB_BASE_NAME python: $params.PythonVersion"
+    statusName = "$env.JOB_BASE_NAME python: $params.PythonVersion"
 
     stage('Clean_start') {
         stage_log('CLEAN_START')
@@ -105,8 +106,13 @@ node(params.NodeSelector) {
             stage_log('CLEAN_FIN')
             clean_workspace()
         }
+        if (currentBuild.result == 'SUCCESS') {
+            statusUpdate('success')
+        } else {
+            statusUpdate('failure')
         }
     }
+}
 
 void clean_workspace() {
     try {
@@ -157,4 +163,20 @@ void reuseCachedFiles() {
     sh label: 'Check files existance', script: 'ls -l 110-ct-segmentation-quantize/kits19/kits19_frames \
                                                 && ls -l 203-meter-reader/model/ \
                                                 && ls -l 405-paddle-ocr-webcam/model'
+}
+
+def statusUpdate(status) {
+    if (params.propagateStatus) {
+        withCredentials([string(credentialsId: 'github_openvino_notebooks_token', variable: 'TOKEN')]) {
+            cmd = """set +x curl "https://api.github.com/repos/wkobiela/openvino_notebooks/statuses/${params.Commit}" \
+            -H "Content-Type: application/json" \
+            -H 'Authorization: token ${TOKEN}' \
+            -X POST \
+            -d "{\\"state\\": \\"${status}\\",\\"context\\": \\"${statusName}\\", \
+            \\"description\\": \\"Jenkins\\", \\"target_url\\": \\"${env.BUILD_URL}\\"}\""""
+            sh label: 'Update Github actions status', script: cmd
+        }
+    } else {
+        println('Propagate status is disabled.')
+    }
 }

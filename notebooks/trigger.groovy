@@ -37,7 +37,7 @@ def statusUpdate(status) {
             sh label: 'Update Github actions status', script: cmd
         }
     } else {
-        println("Propagate status is disabled.")
+        println('Propagate status is disabled.')
     }
 }
 
@@ -50,8 +50,8 @@ pipeline {
             }
             steps {
                 script {
-                    statusUpdate("pending")
-                    String changedFiles = sh(returnStdout: true, label: "Get changed files", script: """wget -qO- \
+                    statusUpdate('pending')
+                    String changedFiles = sh(returnStdout: true, label: 'Get changed files', script: """wget -qO- \
                     http://api.github.com/repos/wkobiela/openvino_notebooks/commits/$commit \
                     | jq -r '.files | .[] | .filename'""")
                     if (changedFiles.contains('ipynb')) {
@@ -86,12 +86,12 @@ pipeline {
     post {
         success {
             node('linux') {
-                statusUpdate("success")
+                statusUpdate('success')
             }
         }
         failure {
             node('linux') {
-                statusUpdate("failure")
+                statusUpdate('failure')
             }
         }
     }
