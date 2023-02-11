@@ -1,14 +1,5 @@
 /* groovylint-disable CompileStatic, Indentation, NestedBlockDepth, NoJavaUtilDate */
-import java.text.SimpleDateFormat
-
-Date date = new Date()
-SimpleDateFormat sdf = new SimpleDateFormat('yyyy-MM-dd HH:mm:ss Z', Locale.default)
-SimpleDateFormat timeZone = new SimpleDateFormat('Z', Locale.default)
-if (params.CheckoutDate == '') {
-    formatted_date = "${sdf.format(date)}"
-} else {
-    formatted_date = "${params.CheckoutDate} ${timeZone.format(date)}"
-}
+commit = params.Commit ?: 'main'
 
 node(params.NodeSelector) {
     currentBuild.displayName = "#$env.BUILD_NUMBER $env.JOB_BASE_NAME python: $params.PythonVersion"
@@ -25,8 +16,8 @@ node(params.NodeSelector) {
             stage_log('CLONE')
             bat label: 'Clone repository', script: 'git clone https://github.com/openvinotoolkit/openvino_notebooks.git'
             dir("$WORKSPACE/openvino_notebooks") {
-                    String s = bat(script: """@git rev-list -n 1 --before="$formatted_date" main""", returnStdout: true)
-                    bat label: "Checkout to $formatted_date, $s", script: "git checkout $s"
+                    // String s = bat(script: """@git rev-list -n 1 --before="$formatted_date" main""", returnStdout: true)
+                    bat label: "Checkout to $commit", script: "git checkout $commit"
                 }
         }
         stage('Get changed files') {
