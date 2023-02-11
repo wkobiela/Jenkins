@@ -32,18 +32,18 @@ pipeline {
             }
             steps {
                 script {
-                    String changedFiles = sh(returnStdout: true, script: """wget -qO- \
+                    String changedFiles = sh(returnStdout: true, label: "Get changed files", script: """wget -qO- \
                     http://api.github.com/repos/openvinotoolkit/openvino_notebooks/commits/$commit \
                     | jq -r '.files | .[] | select(.status == "modified") | .filename'""")
                     if (changedFiles.contains('ipynb')) {
-                        println("Files changed: $changedFiles")
+                        println("Files changed: ${changedFiles}")
                         runTests = true
                     }
                     else if (changedFiles.contains('requirements.txt')) {
-                        println("Files changed: $changedFiles")
+                        println("Files changed: ${changedFiles}")
                         runTests = true
                     } else {
-                        println("Files changed: $changedFiles")
+                        println("Files changed: ${changedFiles}No need to run any tests.")
                         currentBuild.result = 'SUCCESS'
                         return
                     }
