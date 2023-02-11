@@ -84,14 +84,15 @@ pipeline {
         }
     }
     post {
-        agent {
-            label 'linux'
-        }
         success {
-            statusUpdate("success")
+            node('linux') {
+                statusUpdate("success")
+            }
         }
         failure {
-            statusUpdate("failure")
+            node('linux') {
+                statusUpdate("failure")
+            }
         }
     }
 }
