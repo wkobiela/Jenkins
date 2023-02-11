@@ -3,6 +3,7 @@ def pythons = Eval.me(params.PythonsArray)
 def os = Eval.me(params.OsArray)
 parallelStagesMap = [:]
 commit = params.Commit ?: 'main'
+runTests = False
 
 pythons.each { p ->
     os.each { o ->
@@ -36,19 +37,26 @@ pipeline {
                     | jq -r '.files | .[] | select(.status == "modified") | .filename'""")
                     if (changedFiles.contains('ipynb')) {
                         println("Files changed: $changedFiles")
+                        runTests = True
                     }
                     else if (changedFiles.contains('requirements.txt')) {
                         println("Files changed: $changedFiles")
+                        runTests = True
                     } else {
                         println("Files changed: $changedFiles")
                         currentBuild.result = 'SUCCESS'
-                        error('No tests needed.')
+                        return
                     }
                 }
             }
         }
         stage('Schedule tests') {
             agent none
+                when {
+                    expression {
+                        runTests True
+                    }
+                }
             steps {
                 script {
                     parallel parallelStagesMap
