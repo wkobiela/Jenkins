@@ -54,7 +54,7 @@ pipeline {
             agent none
                 when {
                     expression {
-                        runTests = true
+                        return runTests
                     }
                 }
             steps {
