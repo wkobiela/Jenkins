@@ -80,6 +80,7 @@ node(params.NodeSelector) {
                     }
             } catch (Exception ex) {
                     unstable("Test stage exited with exception $ex")
+                    currentBuild.result = 'UNSTABLE'
             } finally {
                 stage('Create report') {
                     stage_log('REPORT')
@@ -102,6 +103,7 @@ node(params.NodeSelector) {
         }
     } catch (Exception e) {
         error "Exception message: $e"
+        currentBuild.result = 'FAILURE'
     } finally {
         stage('Clean_fin') {
             stage_log('CLEAN_FIN')

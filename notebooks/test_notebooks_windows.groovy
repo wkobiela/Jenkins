@@ -97,6 +97,7 @@ node(params.NodeSelector) {
                     ])
             } catch (Exception ex) {
                 unstable("Failed to create report: $ex")
+                currentBuild.result = 'UNSTABLE'
             }
         }
         stage('Archive artifacts') {
@@ -109,6 +110,7 @@ node(params.NodeSelector) {
         }
     } catch (Exception e) {
         error "Exception message: $e"
+        currentBuild.result = 'FAILURE'
     } finally {
         stage('Clean_fin') {
             stage_log('CLEAN_FIN')
