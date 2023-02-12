@@ -171,7 +171,7 @@ def statusUpdate(status) {
         withCredentials([string(credentialsId: 'github_openvino_notebooks_token', variable: 'TOKEN')]) {
             cmd = """curl "https://api.github.com/repos/wkobiela/openvino_notebooks/statuses/${params.Commit}" \
             -H "Content-Type: application/json" \
-            -H "Authorization: token ${TOKEN}" \
+            -H "Authorization: token """ + TOKEN + """\" \
             -X POST \
             -d "{\\"state\\": \\"${status}\\",\\"context\\": \\"${statusName}\\", \
             \\"description\\": \\"Jenkins\\", \\"target_url\\": \\"${env.BUILD_URL}\\"}\""""
