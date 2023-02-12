@@ -94,5 +94,10 @@ pipeline {
                 statusUpdate('failure')
             }
         }
+        aborted {
+            node('linux') {
+                statusUpdate('failure')
+            }
+        }
     }
 }
