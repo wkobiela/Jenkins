@@ -21,8 +21,10 @@ podTemplate(
                     sh 'rustup show'
                     sh 'cargo build --all'
                     sh './target/debug/ruff_dev generate-all'
-                    sh '''git diff --quiet README.md || echo "::error file=README.md::This file is outdated. Run 'cargo dev generate-all'."'''
-                    sh '''git diff --quiet ruff.schema.json || echo "::error file=ruff.schema.json::This file is outdated. Run 'cargo dev generate-all'."'''
+                    sh '''git diff --quiet README.md || \
+                    echo "::error file=README.md::This file is outdated. Run 'cargo dev generate-all'."'''
+                    sh '''git diff --quiet ruff.schema.json || \
+                    echo "::error file=ruff.schema.json::This file is outdated. Run 'cargo dev generate-all'."'''
                     sh '''git diff --exit-code -- README.md ruff.schema.json docs'''
                 }
                 sh 'rm -rf ruff'
