@@ -1,3 +1,5 @@
+/* groovylint-disable NestedBlockDepth */
+
 podTemplate(
     containers: [
     containerTemplate(
