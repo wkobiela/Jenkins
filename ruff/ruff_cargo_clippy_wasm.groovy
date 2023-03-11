@@ -15,11 +15,12 @@ podTemplate(
 
     node(POD_LABEL) {
         container('rust') {
-            stage('Cargo-clippy') {
+            stage('Cargo-clippy (wasm)') {
                 sh 'git clone https://github.com/charliermarsh/ruff.git'
                 dir('ruff') {
                     sh 'rustup component add clippy'
-                    sh 'cargo clippy --workspace --all-targets --all-features -- -D warnings'
+                    sh 'rustup target add wasm32-unknown-unknown'
+                    sh 'cargo clippy -p ruff_wasm --target wasm32-unknown-unknown --all-features -- -D warnings'
                 }
             }
         }

@@ -1,5 +1,5 @@
 def parallelStages = [:]
-jobsArray = ['Cargo_build', 'Cargo_fmt', 'Cargo_clippy', 'Cargo_tests', 'Test_scripts']
+jobsArray = ['Cargo_build', 'Cargo_fmt', 'Cargo_clippy (wasm)', 'Cargo_clippy', 'Cargo_tests', 'Test_scripts']
 
 def generateStage(job) {
     return {
