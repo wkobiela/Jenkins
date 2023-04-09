@@ -19,11 +19,13 @@ podTemplate(
                 sh 'git clone https://github.com/charliermarsh/ruff.git'
                 dir('ruff') {
                     sh 'rustup show'
-                    sh './scripts/add_rule.py --name DoTheThing --code PLC999 --linter pylint'
+                    sh './scripts/add_rule.py --name DoTheThing --prefix PL --code C0999 --linter pylint'
                     sh 'cargo check'
+                    sh 'cargo fmt --all --check'
                     sh './scripts/add_plugin.py test --url https://pypi.org/project/-test/0.1.0/ --prefix TST'
-                    sh './scripts/add_rule.py --name FirstRule --code TST001 --linter test'
+                    sh './scripts/add_rule.py --name FirstRule --prefix TST --code 001 --linter test'
                     sh 'cargo check'
+                    sh 'cargo fmt --all --check'
                 }
             }
         }
