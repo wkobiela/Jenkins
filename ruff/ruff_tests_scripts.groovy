@@ -18,6 +18,7 @@ podTemplate(
             stage('Tests-scripts') {
                 sh 'git clone https://github.com/charliermarsh/ruff.git'
                 dir('ruff') {
+                    sh 'rustup component add rustfmt'
                     sh 'rustup show'
                     sh './scripts/add_rule.py --name DoTheThing --prefix PL --code C0999 --linter pylint'
                     sh 'cargo check'
