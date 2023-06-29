@@ -2,11 +2,19 @@ node(params.NodeSelector) {
     currentBuild.displayName = "#$env.BUILD_NUMBER node: $env.NODE_NAME"
     def image
     stage('Clean') {
-        println("============================================== CLEAN STAGE ==============================================")
+        println('============================================ CLEAN STAGE ============================================')
         cleanWs()
     }
+    stage('Prune build cache') {
+        if (params.PruneBuildCache) {
+            sh 'docker builder prune --all --force'
+        }
+        else {
+            echo 'Stage was not executed. Build will use available docker build cache.'
+        }
+    }
     stage('Clone') {
-        println("============================================== CLONE STAGE ==============================================")
+        println('============================================ CLONE STAGE ============================================')
         try {
             sh 'git clone https://github.com/wkobiela/Dockerfiles.git'
             dir("$env.WORKSPACE/Dockerfiles") {
@@ -17,7 +25,7 @@ node(params.NodeSelector) {
         }
     }
     stage('Build') {
-        println("============================================== BUILD STAGE ==============================================")
+        println('============================================ BUILD STAGE ============================================')
         try {
             dir("$env.WORKSPACE/Dockerfiles/$params.DockerfileDir") {
                 image = docker.build(params.ImageName)
@@ -27,7 +35,7 @@ node(params.NodeSelector) {
         }
     }
     stage('Test') {
-        println("============================================== TEST STAGE ===============================================")
+        println('============================================ TEST STAGE =============================================')
         try {
             image.inside {
                 sh 'echo "Tests passed"'
@@ -37,7 +45,7 @@ node(params.NodeSelector) {
         }
     }
     stage('Push image') {
-        println("============================================== PUSH STAGE ===============================================")
+        println('============================================ PUSH STAGE =============================================')
         try {
             docker.withRegistry('', 'dockerhub') {
                 image.push("latest")
@@ -47,7 +55,7 @@ node(params.NodeSelector) {
         }
     }
     stage('Remove image') {
-        println("============================================ REMOVE STAGE ===============================================")
+        println('========================================== REMOVE STAGE =============================================')
         try {
             sh "docker rmi $params.ImageName"
         } catch (Exception e) {
@@ -55,7 +63,7 @@ node(params.NodeSelector) {
         }
     }
     stage('Clean') {
-        println("============================================== CLEAN STAGE ==============================================")
+        println('============================================ CLEAN STAGE ============================================')
         cleanWs()
     }
 }
