@@ -73,8 +73,8 @@ podTemplate(
                     }
                 }
                 stage('Check files') {
-                    sh 'pwd'
                     sh 'test -f jobs.xlsx && echo "$FILE exists."'
+                    sh 'cp jobs.xlsx results.xlsx'
                     sh 'test -f debug.log && echo "$FILE exists."'
                 }
                 withEnv(["PYTHONPATH=$WORKSPACE/modules/"]) {
