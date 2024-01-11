@@ -73,6 +73,7 @@ podTemplate(
                     }
                 }
                 stage('Check files') {
+                    sh 'pwd'
                     sh 'test -f jobs.xlsx && echo "$FILE exists."'
                     sh 'test -f debug.log && echo "$FILE exists."'
                 }
@@ -80,7 +81,7 @@ podTemplate(
                     stage('Run tests') {
                         result = sh(script: "python${params.Python} -m pytest --html=report.html", returnStatus: true)
                         if (result != 0) {
-                            unstable("Test stage exited with exception $ex")
+                            unstable('Test stage exited with non zero exit code.')
                             testsFailed = true
                         }
                     }
@@ -103,6 +104,10 @@ podTemplate(
             } catch (Exception ex) {
                 statusUpdate('failure')
                 error("Build failed. $ex")
+            } finally {
+                stage('Archive artifacts') {
+                    archiveArtifacts(allowEmptyArchive: true, artifacts: '**/*.xlsx')
+                    }
             }
         }
     }
