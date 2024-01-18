@@ -1,5 +1,5 @@
 /* groovylint-disable DuplicateStringLiteral, NestedBlockDepth */
-String checkName = "${env.JOB_BASE_NAME}_python${params.Python}"
+checkName = "${env.JOB_BASE_NAME}_python${params.Python}"
 
 void statusUpdate(String status) {
     if (params.propagateStatus) {
