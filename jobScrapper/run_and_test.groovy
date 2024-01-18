@@ -1,4 +1,6 @@
 /* groovylint-disable DuplicateStringLiteral, NestedBlockDepth */
+checkName = "${env.JOB_BASE_NAME}_python${params.Python}"
+
 void statusUpdate(String status) {
     if (params.propagateStatus) {
         withCredentials([string(credentialsId: 'github_token', variable: 'TOKEN')]) {
@@ -15,7 +17,6 @@ void statusUpdate(String status) {
     }
 }
 
-String checkName = "${env.JOB_BASE_NAME}_python${params.Python}"
 currentBuild.displayName = "${checkName} #$env.BUILD_NUMBER"
 
 boolean testsFailed = false
