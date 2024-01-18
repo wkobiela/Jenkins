@@ -1,4 +1,6 @@
 /* groovylint-disable DuplicateStringLiteral, NestedBlockDepth */
+checkName = "${env.JOB_BASE_NAME}"
+
 void statusUpdate(String status) {
     if (params.propagateStatus) {
         withCredentials([string(credentialsId: 'github_token', variable: 'TOKEN')]) {
