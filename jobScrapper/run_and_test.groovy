@@ -63,7 +63,7 @@ podTemplate(
                     sh "python${params.Python} -m pip install --cache-dir=/mnt/pip_cache -r requirements.txt"
                 }
                 stage('Run scrapper') {
-                    sh "python${params.Python} runner.py | tee run.log"
+                    sh "python${params.Python} runner.py --config config.json | tee run.log"
                     command = 'cat run.log'
                     out = sh(script: command, returnStdout: true).trim()
                     String searchTermRegex = /(?i)(exception|error|ERROR)/
