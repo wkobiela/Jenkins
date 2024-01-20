@@ -63,17 +63,10 @@ podTemplate(
                     sh "python${params.Python} -m pip install --cache-dir=/mnt/pip_cache -r requirements.txt"
                 }
                 stage('Build package') {
-                    wheel = sh(script: "python${params.Python} -m build", returnStatus: true).trim()
-                    println(wheel)
-                    String wheelTermRegex = /Successfully built .*? and (.*?)$/
-                    if (wheel =~ wheelTermRegex) {
-                        String wheelFilename = matcher[0][1]
-                        echo "The wheel filename is: ${wheelFilename}"
-                    } else {
-                        error 'Failed to extract wheel filename.'
-                    }
+                    sh "python${params.Python} -m build"
                 }
                 stage('Install package') {
+                    String wheelFilename = sh(script: 'find "dist/" -type f -name "*.whl"', returnStdout: true).trim()
                     sh "python${params.Python} -m pip install --cache-dir=/mnt/pip_cache dist/${wheelFilename}"
                 }
                 stage('Run scrapper') {
