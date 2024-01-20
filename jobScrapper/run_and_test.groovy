@@ -63,7 +63,7 @@ podTemplate(
                     sh "python${params.Python} -m pip install --cache-dir=/mnt/pip_cache -r requirements.txt"
                 }
                 stage('Build package') {
-                    wheel = sh(script: "python${params.Python} -m build", returnStatus: true)
+                    wheel = sh(script: "python${params.Python} -m build", returnStatus: true).trim()
                     println(wheel)
                     String wheelTermRegex = /Successfully built .*? and (.*?)$/
                     if (wheel =~ wheelTermRegex) {
