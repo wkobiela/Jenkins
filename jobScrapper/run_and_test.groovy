@@ -67,7 +67,7 @@ podTemplate(
                 }
                 stage('Install package') {
                     String wheelFilename = sh(script: 'find "dist/" -type f -name "*.whl"', returnStdout: true).trim()
-                    sh "python${params.Python} -m pip install --cache-dir=/mnt/pip_cache dist/${wheelFilename}"
+                    sh "python${params.Python} -m pip install --cache-dir=/mnt/pip_cache ${wheelFilename}"
                 }
                 stage('Run scrapper') {
                     sh 'jobscrapper --config jobscrapper/config.json | tee run.log'
