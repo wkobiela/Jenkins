@@ -62,8 +62,21 @@ podTemplate(
                     sh "python${params.Python} -m pip install --cache-dir=/mnt/pip_cache --upgrade pip"
                     sh "python${params.Python} -m pip install --cache-dir=/mnt/pip_cache -r requirements.txt"
                 }
+                stage('Build package') {
+                    wheel = sh(script: "python${params.Python} -m build", returnStatus: true)
+                    String wheelTermRegex = /Successfully built .*? and (.*?)$/
+                    if (wheel =~ wheelTermRegex) {
+                        String wheelFilename = matcher[0][1]
+                        echo "The wheel filename is: ${wheelFilename}"
+                    } else {
+                        error 'Failed to extract wheel filename.'
+                    }
+                }
+                stage('Install package') {
+                    sh "python${params.Python} -m pip install --cache-dir=/mnt/pip_cache dist/${wheelFilename}"
+                }
                 stage('Run scrapper') {
-                    sh "python${params.Python} runner.py --config config.json | tee run.log"
+                    sh 'jobscrapper --config jobscrapper/config.json | tee run.log'
                     command = 'cat run.log'
                     out = sh(script: command, returnStdout: true).trim()
                     String searchTermRegex = /(?i)(exception|error|ERROR)/
@@ -78,13 +91,11 @@ podTemplate(
                     sh 'cp jobs.xlsx results.xlsx'
                     sh 'test -f debug.log && echo "$FILE exists."'
                 }
-                withEnv(["PYTHONPATH=$WORKSPACE/modules/"]) {
-                    stage('Run tests') {
-                        result = sh(script: "python${params.Python} -m pytest --html=report.html", returnStatus: true)
-                        if (result != 0) {
+                stage('Run tests') {
+                    result = sh(script: "python${params.Python} -m pytest --html=report.html", returnStatus: true)
+                    if (result != 0) {
                             unstable('Test stage exited with non zero exit code.')
                             testsFailed = true
-                        }
                     }
                 }
                 stage('Publish report') {
