@@ -81,9 +81,9 @@ podTemplate(
                     }
                 }
                 stage('Check files') {
-                    sh 'test -f jobs.xlsx && echo "$FILE exists."'
+                    sh 'test -f jobs.xlsx && echo "jobs.xlsx exists."'
                     sh 'cp jobs.xlsx results.xlsx'
-                    sh 'test -f debug.log && echo "$FILE exists."'
+                    sh 'test -f debug.log && echo "debug.log exists."'
                 }
                 stage('Run tests') {
                     result = sh(script: "python${params.Python} -m pytest --html=report.html --cov-report term \
