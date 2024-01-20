@@ -62,8 +62,15 @@ podTemplate(
                     sh "python${params.Python} -m pip install --cache-dir=/mnt/pip_cache --upgrade pip"
                     sh "python${params.Python} -m pip install --cache-dir=/mnt/pip_cache -r requirements.txt"
                 }
+                stage('Build package') {
+                    sh "python${params.Python} -m build"
+                }
+                stage('Install package') {
+                    String wheelFilename = sh(script: 'find "dist/" -type f -name "*.whl"', returnStdout: true).trim()
+                    sh "python${params.Python} -m pip install --cache-dir=/mnt/pip_cache ${wheelFilename}"
+                }
                 stage('Run scrapper') {
-                    sh "python${params.Python} runner.py --config config.json | tee run.log"
+                    sh 'jobscrapper --config jobscrapper/config.json | tee run.log'
                     command = 'cat run.log'
                     out = sh(script: command, returnStdout: true).trim()
                     String searchTermRegex = /(?i)(exception|error|ERROR)/
@@ -78,13 +85,11 @@ podTemplate(
                     sh 'cp jobs.xlsx results.xlsx'
                     sh 'test -f debug.log && echo "$FILE exists."'
                 }
-                withEnv(["PYTHONPATH=$WORKSPACE/modules/"]) {
-                    stage('Run tests') {
-                        result = sh(script: "python${params.Python} -m pytest --html=report.html", returnStatus: true)
-                        if (result != 0) {
+                stage('Run tests') {
+                    result = sh(script: "python${params.Python} -m pytest --html=report.html", returnStatus: true)
+                    if (result != 0) {
                             unstable('Test stage exited with non zero exit code.')
                             testsFailed = true
-                        }
                     }
                 }
                 stage('Publish report') {
@@ -107,7 +112,7 @@ podTemplate(
                 error("Build failed. $ex")
             } finally {
                 stage('Archive artifacts') {
-                    archiveArtifacts(allowEmptyArchive: true, artifacts: '**/*.xlsx')
+                    archiveArtifacts(allowEmptyArchive: true, artifacts: '**/*.xlsx, **/*.whl, **/*.tar.gz')
                     }
             }
         }
