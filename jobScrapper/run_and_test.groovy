@@ -86,13 +86,14 @@ podTemplate(
                     sh 'test -f debug.log && echo "debug.log exists."'
                 }
                 stage('Run tests') {
-                    result = sh(script: "python${params.Python} -m pytest --html=report.html", returnStatus: true)
+                    result = sh(script: "python${params.Python} -m pytest --html=report.html --cov-report term \
+                    --cov-report html --cov=jobscrapper", returnStatus: true)
                     if (result != 0) {
                             unstable('Test stage exited with non zero exit code.')
                             testsFailed = true
                     }
                 }
-                stage('Publish report') {
+                stage('Publish reports') {
                     publishHTML(target: [
                             allowMissing: true,
                             alwaysLinkToLastBuild: false,
@@ -100,6 +101,14 @@ podTemplate(
                             reportDir: "$WORKSPACE",
                             reportFiles: '*.html',
                             reportName: 'Pytest Report'
+                    ])
+                    publishHTML(target: [
+                            allowMissing: true,
+                            alwaysLinkToLastBuild: false,
+                            keepAll: true,
+                            reportDir: "$WORKSPACE/htmlcov",
+                            reportFiles: '*.html',
+                            reportName: 'Pytest-cov Report'
                     ])
                     if (testsFailed) {
                         statusUpdate('failure')
