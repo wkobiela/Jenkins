@@ -112,7 +112,7 @@ podTemplate(
                 error("Build failed. $ex")
             } finally {
                 stage('Archive artifacts') {
-                    archiveArtifacts(allowEmptyArchive: true, artifacts: '**/*.xlsx')
+                    archiveArtifacts(allowEmptyArchive: true, artifacts: '**/*.xlsx, **/*.whl')
                     }
             }
         }
