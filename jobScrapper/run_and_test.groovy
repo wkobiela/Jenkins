@@ -64,6 +64,7 @@ podTemplate(
                 }
                 stage('Build package') {
                     wheel = sh(script: "python${params.Python} -m build", returnStatus: true)
+                    println(wheel)
                     String wheelTermRegex = /Successfully built .*? and (.*?)$/
                     if (wheel =~ wheelTermRegex) {
                         String wheelFilename = matcher[0][1]
