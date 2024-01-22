@@ -20,7 +20,6 @@ void statusUpdate(String status) {
 currentBuild.displayName = "${checkName} #$env.BUILD_NUMBER"
 
 boolean testsFailed = false
-String onlyPrNumber = params.Change_ID.substring(3)
 
 node('linux') {
     stage('Github check') {
@@ -57,8 +56,11 @@ podTemplate(
                     sh "git clone ${params.Repo_url} ."
                     sh "git config --global --add safe.directory ${WORKSPACE}"
                     sh 'git config --global --add remote.origin.fetch "+refs/pull/*/head:refs/remotes/origin/pr/*'
-                    sh "git fetch origin pull/${onlyPrNumber}/head:${params.Change_ID}"
-                    sh "git checkout pr/${onlyPrNumber}"
+                    echo(params.Change_ID)
+                    if (params.Change_ID) {
+                        sh "git fetch origin pull/PR-${params.Change_ID}/head:${params.Change_ID}"
+                        sh "git checkout pr/${params.Change_ID}"
+                    }
                     sh "git reset --hard ${params.Commit}"
                 }
                 stage('Install dependencies') {
