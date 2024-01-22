@@ -58,7 +58,7 @@ podTemplate(
                     sh 'git config --global --add remote.origin.fetch "+refs/pull/*/head:refs/remotes/origin/pr/*"'
                     echo(params.Change_ID)
                     if (params.Change_ID) {
-                        sh "git fetch origin pull/PR-${params.Change_ID}/head:${params.Change_ID}"
+                        sh "git fetch origin pull/${params.Change_ID}/head:pr/${params.Change_ID}"
                         sh "git checkout pr/${params.Change_ID}"
                     }
                     sh "git reset --hard ${params.Commit}"
