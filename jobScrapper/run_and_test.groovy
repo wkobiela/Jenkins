@@ -56,7 +56,6 @@ podTemplate(
                     sh "git clone ${params.Repo_url} ."
                     sh "git config --global --add safe.directory ${WORKSPACE}"
                     sh 'git config --global --add remote.origin.fetch "+refs/pull/*/head:refs/remotes/origin/pr/*"'
-                    echo(params.Change_ID)
                     if (params.Change_ID) {
                         sh "git fetch origin pull/${params.Change_ID}/head:pr/${params.Change_ID}"
                         sh "git checkout pr/${params.Change_ID}"
