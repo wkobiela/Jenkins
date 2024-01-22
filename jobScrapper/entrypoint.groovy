@@ -42,6 +42,13 @@ pipeline {
                                                 .getItemByFullName(upstreamJobName)
                                                 .getLastBuild()
                         println(upstreamBuild)
+                        def test = upstreamBuild.getAction(EnvActionImpl)
+                        println(test)
+                        try {
+                            upstreamEnv = test.getEnvironment()
+                        } catch Exception as e {
+                            println(e)
+                        }
                         upstreamEnv = upstreamBuild.getAction(EnvActionImpl).getEnvironment()
                     }
                 }
