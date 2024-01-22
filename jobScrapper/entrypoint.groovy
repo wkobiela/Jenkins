@@ -2,6 +2,8 @@
 import hudson.EnvVars
 import org.jenkinsci.plugins.workflow.cps.EnvActionImpl
 import hudson.model.Cause
+import hudson.model.Cause$UpstreamCause
+
 
 // Map parallelStages = [:]
 pythonsArray = ['3.9', '3.10', '3.11', '3.12']
@@ -37,11 +39,19 @@ pipeline {
                 script {
                     def upstreamCause = currentBuild.rawBuild.getCause(Cause$UpstreamCause)
                     if (upstreamCause) {
-                        def upstreamJobName = upstreamCause.properties.upstreamProject
-                        def upstreamBuild = Jenkins.instance
-                                                .getItemByFullName(upstreamJobName)
-                                                .getLastBuild()
-                        upstreamEnv = upstreamBuild.getEnvironment()
+                        def upstreamJobName = upstreamCause.upstreamProject
+                        def upstreamBuild = Jenkins.instance.getItemByFullName(upstreamJobName)?.getLastBuild()
+
+                        if (upstreamBuild) {
+                            upstreamEnv = upstreamBuild.getEnvironment()
+                            upstreamEnv.each { key, value ->
+                                println("Upstream Environment Variable: $key=$value")
+                            }
+                        } else {
+                            println("Upstream build not found.")
+                        }
+                    } else {
+                        println("Not triggered by an upstream cause.")
                     }
                 }
                 echo upstreamEnv.BUILD_USER_ID
