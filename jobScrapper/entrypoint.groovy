@@ -53,21 +53,20 @@ pipeline {
                         println("Not triggered by an upstream cause.")
                     }
                 }
-                echo upstreamEnv.BUILD_USER_ID
             }
         }
         stage('Get changeset') {
             steps {
                 echo 'INFORMATION FROM SCM:\n' +
-                "URL: ${upstreamEnv.GIT_URL} \n" +
-                "Commit: ${upstreamEnv.GIT_COMMIT} \n" +
+                "URL: ${params.GIT_URL} \n" +
+                "Commit: ${params.GIT_COMMIT} \n" +
                 "Change ID: ${upstreamEnv.CHANGE_ID} \n" +
                 "Build user ID: ${upstreamEnv.BUILD_USER_ID} \n" +
                 "Change author: ${upstreamEnv.CHANGE_AUTHOR}"
                 script {
                     currentBuild.description =
-                    "URL: <a href='${upstreamEnv.GIT_URL}'>${upstreamEnv.GIT_URL}</a><br>" +
-                    "Commit: <b>${upstreamEnv.GIT_COMMIT}</b><br>" +
+                    "URL: <a href='${params.GIT_URL}'>${params.GIT_URL}</a><br>" +
+                    "Commit: <b>${params.GIT_COMMIT}</b><br>" +
                     "Change ID: <b>${upstreamEnv.CHANGE_ID}</b><br>" +
                     "Build user ID: <b>${upstreamEnv.BUILD_USER_ID}</b><br>" +
                     "Change author: <b>${upstreamEnv.CHANGE_AUTHOR}</b>"
