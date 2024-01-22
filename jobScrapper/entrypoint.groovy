@@ -1,7 +1,5 @@
 /* groovylint-disable DuplicateStringLiteral, MethodReturnTypeRequired, NestedBlockDepth, NoDef */
 import hudson.EnvVars
-import org.jenkinsci.plugins.workflow.cps.EnvActionImpl
-import hudson.model.Cause
 import hudson.model.Cause$UpstreamCause
 
 
@@ -52,6 +50,7 @@ pipeline {
                     } else {
                         println("Not triggered by an upstream cause.")
                         currentBuild.result = "UNSTABLE"
+                        return
                     }
                 }
             }
