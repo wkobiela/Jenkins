@@ -34,7 +34,6 @@ pipeline {
     agent none
     stages {
         stage('Get upstream vars') {
-            agent any
             steps {
                 script {
                     def upstreamCause = currentBuild.rawBuild.getCause(Cause$UpstreamCause)
