@@ -37,19 +37,10 @@ pipeline {
                     def upstreamCause = currentBuild.rawBuild.getCause(Cause$UpstreamCause)
                     if (upstreamCause) {
                         def upstreamJobName = upstreamCause.properties.upstreamProject
-                        println(upstreamJobName)
                         def upstreamBuild = Jenkins.instance
                                                 .getItemByFullName(upstreamJobName)
                                                 .getLastBuild()
-                        println(upstreamBuild)
-                        def test = upstreamBuild.getAction(EnvActionImpl)
-                        println(test)
-                        try {
-                            upstreamEnv = test.getEnvironment()
-                        } catch (Exception e) {
-                            println(e)
-                        }
-                        upstreamEnv = upstreamBuild.getAction(EnvActionImpl).getEnvironment()
+                        upstreamEnv = upstreamBuild.getEnvironment()
                     }
                 }
                 echo upstreamEnv.BUILD_USER_ID
