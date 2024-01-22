@@ -43,14 +43,15 @@ pipeline {
 
                         if (upstreamBuild) {
                             upstreamEnv = upstreamBuild.getEnvironment()
-                            upstreamEnv.each { key, value ->
-                                println("Upstream Environment Variable: $key=$value")
-                            }
+                            // upstreamEnv.each { key, value ->
+                            //     println("Upstream Environment Variable: $key=$value")
+                            // }
                         } else {
                             println("Upstream build not found.")
                         }
                     } else {
                         println("Not triggered by an upstream cause.")
+                        currentBuild.result = "UNSTABLE"
                     }
                 }
             }
@@ -78,8 +79,6 @@ pipeline {
                     // parallelStages.put("${banditStage}",
                     //     generateStage(banditStage, env.GIT_URL, env.GIT_COMMIT, env.CHANGE_ID, 'None'))
                 }
-
-                echo upstreamEnv
             }
         }
         stage('Run CI') {
