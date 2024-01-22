@@ -37,6 +37,7 @@ pipeline {
                     def upstreamCause = currentBuild.rawBuild.getCause(Cause$UpstreamCause)
                     if (upstreamCause) {
                         def upstreamJobName = upstreamCause.properties.upstreamProject
+                        println(upstreamJobName)
                         def upstreamBuild = Jenkins.instance
                                                 .getItemByFullName(upstreamJobName)
                                                 .getLastBuild()
