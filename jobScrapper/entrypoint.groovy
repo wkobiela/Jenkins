@@ -69,6 +69,8 @@ pipeline {
                     // parallelStages.put("${banditStage}",
                     //     generateStage(banditStage, env.GIT_URL, env.GIT_COMMIT, env.CHANGE_ID, 'None'))
                 }
+
+                echo upstreamEnv
             }
         }
         stage('Run CI') {
