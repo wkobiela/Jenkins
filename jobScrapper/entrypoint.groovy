@@ -46,7 +46,7 @@ pipeline {
                         println(test)
                         try {
                             upstreamEnv = test.getEnvironment()
-                        } catch Exception as e {
+                        } catch (Exception e) {
                             println(e)
                         }
                         upstreamEnv = upstreamBuild.getAction(EnvActionImpl).getEnvironment()
