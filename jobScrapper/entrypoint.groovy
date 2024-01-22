@@ -41,6 +41,7 @@ pipeline {
                         def upstreamBuild = Jenkins.instance
                                                 .getItemByFullName(upstreamJobName)
                                                 .getLastBuild()
+                        println(upstreamBuild)
                         upstreamEnv = upstreamBuild.getAction(EnvActionImpl).getEnvironment()
                     }
                 }
