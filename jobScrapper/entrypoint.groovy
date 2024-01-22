@@ -48,9 +48,8 @@ pipeline {
                             println("Upstream build not found.")
                         }
                     } else {
-                        println("Not triggered by an upstream cause.")
                         currentBuild.result = "UNSTABLE"
-                        return
+                        error 'Not triggered by an upstream cause. Finishing.'
                     }
                 }
             }
