@@ -3,7 +3,7 @@ import hudson.EnvVars
 import hudson.model.Cause$UpstreamCause
 
 
-// Map parallelStages = [:]
+Map parallelStages = [:]
 pythonsArray = ['3.9', '3.10', '3.11', '3.12']
 runAndTestStage = 'jobScrapperCI/build_run_test'
 banditStage = 'jobScrapperCI/run_bandit'
@@ -54,7 +54,7 @@ pipeline {
                 }
             }
         }
-        stage('Get changeset') {
+        stage('Generate jobs') {
             steps {
                 echo 'INFORMATION FROM SCM:\n' +
                 "URL: ${params.GIT_URL} \n" +
@@ -70,12 +70,12 @@ pipeline {
                     "Build user ID: <b>${upstreamEnv.BUILD_USER_ID}</b><br>" +
                     "Change author: <b>${upstreamEnv.CHANGE_AUTHOR}</b>"
 
-                    // pythonsArray.each { py ->
-                    //     parallelStages.put("${runAndTestStage}_python${py}",
-                    //                   generateStage(runAndTestStage, env.GIT_URL, env.GIT_COMMIT, env.CHANGE_ID, py))
-                    // }
-                    // parallelStages.put("${banditStage}",
-                    //     generateStage(banditStage, env.GIT_URL, env.GIT_COMMIT, env.CHANGE_ID, 'None'))
+                    pythonsArray.each { py ->
+                        parallelStages.put("${runAndTestStage}_python${py}",
+                        generateStage(runAndTestStage, params.GIT_URL, params.GIT_COMMIT, upstreamEnv.CHANGE_ID, py))
+                    }
+                    parallelStages.put("${banditStage}",
+                        generateStage(banditStage, params.GIT_URL, params.GIT_COMMIT, upstreamEnv.CHANGE_ID, 'None'))
                 }
             }
         }
@@ -84,7 +84,7 @@ pipeline {
             steps {
                 script {
                     echo 'Started CI'
-                    // parallel parallelStages
+                    parallel parallelStages
                     }
             }
         }
