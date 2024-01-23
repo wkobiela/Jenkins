@@ -40,7 +40,27 @@ void addComment(String comment, String number) {
             sh label: 'Add comment to Github PR', script: cmd
         }
     } catch (Exception ex) {
-        echo "Cannot add comment.\nException: $ex"
+        echo "Cannot add comment. \n $ex"
+    }
+}
+
+void getUpstreamVars() {
+    try {
+        def upstreamCause = currentBuild.rawBuild.getCause(Cause$UpstreamCause)
+        if (upstreamCause) {
+            def upstreamJobName = upstreamCause.upstreamProject
+            def upstreamBuild = Jenkins.instance.getItemByFullName(upstreamJobName)?.getLastBuild()
+            if (upstreamBuild) {
+                upstreamEnv = upstreamBuild.getEnvironment()
+            } else {
+                error 'Upstream build not found.'
+            }
+        } else {
+            currentBuild.result = 'UNSTABLE'
+            error 'Not triggered by an upstream cause. Finishing.'
+        }
+    } catch (Exception ex) {
+        echo "Exception while getting upstream vars: \n $ex"
     }
 }
 
@@ -50,23 +70,7 @@ pipeline {
         stage('Get upstream vars') {
             steps {
                 script {
-                    def upstreamCause = currentBuild.rawBuild.getCause(Cause$UpstreamCause)
-                    if (upstreamCause) {
-                        def upstreamJobName = upstreamCause.upstreamProject
-                        def upstreamBuild = Jenkins.instance.getItemByFullName(upstreamJobName)?.getLastBuild()
-
-                        if (upstreamBuild) {
-                            upstreamEnv = upstreamBuild.getEnvironment()
-                            // upstreamEnv.each { key, value ->
-                            //     println("Upstream Environment Variable: $key=$value")
-                            // }
-                        } else {
-                            println("Upstream build not found.")
-                        }
-                    } else {
-                        currentBuild.result = "UNSTABLE"
-                        error 'Not triggered by an upstream cause. Finishing.'
-                    }
+                    getUpstreamVars()
                 }
             }
         }
@@ -87,7 +91,14 @@ pipeline {
                     "Build user ID: <b>${upstreamEnv.BUILD_USER_ID}</b><br>" +
                     "Change author: <b>${upstreamEnv.CHANGE_AUTHOR}</b>"
 
-                    addComment('This PR was commented with API.', upstreamEnv.CHANGE_ID)
+                    if (whitelist.contains(upstreamEnv.CHANGE_AUTHOR) || 
+                    whitelist.contains(upstreamEnv.BUILD_USER_ID)) {
+                            echo 'comment added'
+                            //addComment('This PR was commented with API.', upstreamEnv.CHANGE_ID)
+                    else {
+                            echo 'comment not added'
+                        }
+                    }
 
                 }
             }
