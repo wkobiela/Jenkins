@@ -98,18 +98,19 @@ pipeline {
                     "Change author: <b>${upstreamEnv.CHANGE_AUTHOR}</b>"
 
                     echo 'debug:'
+                    echo upstreamEnv.BUILD_USER_ID
                     if (upstreamEnv.BUILD_USER_ID.toString() == 'branchIndexing') {
                         echo 'BUILD_USER_ID branchIndexing'
                     } else {
                         echo 'BUILD_USER_ID nie lapie branchIndexing'
                     }
-
+                    echo upstreamEnv.BUILD_USER_ID
                     if (upstreamEnv.BUILD_USER_ID.toString() == 'null') {
                         echo 'BUILD_USER_ID null'
                     } else {
                         echo 'BUILD_USER_ID nie lapie null'
                     }
-
+                    echo upstreamEnv.CHANGE_ID
                     if (upstreamEnv.CHANGE_ID.toString() == 'null') {
                         echo 'CHANGE_ID null'
                     } else {
