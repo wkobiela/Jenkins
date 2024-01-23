@@ -44,7 +44,7 @@ void addComment(String comment, String number) {
     }
 }
 
-void getUpstreamVars() {
+def getUpstreamVars() {
     try {
         def upstreamCause = currentBuild.rawBuild.getCause(Cause$UpstreamCause)
         if (upstreamCause) {
@@ -62,6 +62,8 @@ void getUpstreamVars() {
     } catch (Exception ex) {
         echo "Exception while getting upstream vars: \n $ex"
     }
+
+    return upstreamEnv
 }
 
 pipeline {
@@ -70,7 +72,7 @@ pipeline {
         stage('Get upstream vars') {
             steps {
                 script {
-                    getUpstreamVars()
+                    upstreamEnv = getUpstreamVars()
                 }
             }
         }
