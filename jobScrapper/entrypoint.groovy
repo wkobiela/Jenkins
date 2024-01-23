@@ -99,26 +99,26 @@ pipeline {
 
                     echo 'debug:'
                     echo upstreamEnv.BUILD_USER_ID
-                    if (upstreamEnv.BUILD_USER_ID.toString() == 'branchIndexing') {
-                        echo 'BUILD_USER_ID branchIndexing'
+                    if (upstreamEnv.BUILD_USER_ID == 'wkobiela') {
+                        echo 'BUILD_USER_ID wkobiela'
                     } else {
                         echo 'BUILD_USER_ID nie lapie branchIndexing'
                     }
                     echo upstreamEnv.BUILD_USER_ID
-                    if (upstreamEnv.BUILD_USER_ID.toString() == 'null') {
-                        echo 'BUILD_USER_ID null'
+                    if (upstreamEnv.BUILD_USER_ID == 'wkobiela') {
+                        echo 'BUILD_USER_ID wkobiela'
                     } else {
                         echo 'BUILD_USER_ID nie lapie null'
                     }
                     echo upstreamEnv.CHANGE_ID
-                    if (upstreamEnv.CHANGE_ID.toString() == 'null') {
+                    if (upstreamEnv.CHANGE_ID == 'null') {
                         echo 'CHANGE_ID null'
                     } else {
                         echo 'CHANGE_ID nie lapie null'
                     }
 
                     if ((!(whitelist.contains(upstreamEnv.CHANGE_AUTHOR)) ||
-                    !(whitelist.contains(upstreamEnv.BUILD_USER_ID))) &&
+                    !(whitelist.contains(upstreamEnv.BUILD_USER_ID))) ||
                     !(upstreamEnv.BUILD_USER_ID == 'branchIndexing' && upstreamEnv.BUILD_USER_ID == 'null' &&
                     upstreamEnv.CHANGE_ID == 'null')) {
                         echo 'Author of commit not whiltelisted or build started by scheduler.'
