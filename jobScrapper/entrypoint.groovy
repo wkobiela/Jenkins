@@ -67,7 +67,7 @@ def getUpstreamVars() {
 }
 
 pipeline {
-    agent none
+    agent any
     stages {
         stage('Get upstream vars') {
             steps {
@@ -77,7 +77,7 @@ pipeline {
             }
         }
         stage('Check changeset') {
-            agent any
+            // agent any
             steps {
                 echo 'INFORMATION FROM SCM:\n' +
                     "URL: ${params.GIT_URL} \n" +
@@ -116,7 +116,7 @@ pipeline {
             }
         }
         stage('Run CI') {
-            agent none
+            // agent none
             steps {
                 script {
                     echo 'Started CI'
