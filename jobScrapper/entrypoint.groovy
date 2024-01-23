@@ -101,8 +101,9 @@ pipeline {
                     whitelist.contains(upstreamEnv.BUILD_USER_ID)) {
                             echo 'Author of commit not whiltelisted or build started by scheduler.'
                             comment = 'Jenkins checks need to be started by whitelisted user, and will appear' +
-                            ' as failed.\nPlease wait for repo owner to start checks manually.'
+                            ' as failed.\\nPlease wait for repo owner to start checks manually.'
                             addComment(comment, upstreamEnv.CHANGE_ID)
+                            error 'User not whitelisted.'
                     } else {
                             echo 'No need to add comment. User whitelisted.'
                     }
@@ -125,7 +126,7 @@ pipeline {
             steps {
                 script {
                     echo 'Started CI'
-                    parallel parallelStages
+                    // parallel parallelStages
                     }
             }
         }
