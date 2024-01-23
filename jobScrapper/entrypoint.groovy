@@ -40,7 +40,7 @@ void addComment(String comment, String number) {
             sh label: 'Add comment to Github PR', script: cmd
         }
     } catch (Exception ex) {
-        echo "Cannot add comment.\nException: $e"
+        echo "Cannot add comment.\nException: $ex"
     }
 }
 
