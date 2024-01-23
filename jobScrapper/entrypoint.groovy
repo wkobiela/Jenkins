@@ -71,6 +71,7 @@ pipeline {
             }
         }
         stage('Check changeset') {
+            agent any
             steps {
                 echo 'INFORMATION FROM SCM:\n' +
                     "URL: ${params.GIT_URL} \n" +
