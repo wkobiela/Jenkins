@@ -125,8 +125,7 @@ pipeline {
         stage('Run CI') {
             steps {
                 script {
-                    echo 'Started CI'
-                    // parallel parallelStages
+                    parallel parallelStages
                     }
             }
         }
