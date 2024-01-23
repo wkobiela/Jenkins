@@ -2,7 +2,6 @@
 import hudson.EnvVars
 import hudson.model.Cause$UpstreamCause
 
-
 Map parallelStages = [:]
 pythonsArray = ['3.9', '3.10', '3.11', '3.12']
 runAndTestStage = 'jobScrapperCI/build_run_test'
@@ -67,7 +66,12 @@ def getUpstreamVars() {
 }
 
 pipeline {
-    agent any
+    agent none
+
+    options {
+        skipDefaultCheckout(true)
+    }
+
     stages {
         stage('Get upstream vars') {
             steps {
@@ -77,7 +81,7 @@ pipeline {
             }
         }
         stage('Check changeset') {
-            // agent any
+            agent any
             steps {
                 echo 'INFORMATION FROM SCM:\n' +
                     "URL: ${params.GIT_URL} \n" +
@@ -95,10 +99,12 @@ pipeline {
 
                     if (whitelist.contains(upstreamEnv.CHANGE_AUTHOR) || 
                     whitelist.contains(upstreamEnv.BUILD_USER_ID)) {
-                            echo 'comment added'
-                            //addComment('This PR was commented with API.', upstreamEnv.CHANGE_ID)
+                            echo 'Author of commit not whiltelisted or build started by scheduler.'
+                            comment = 'Jenkins checks need to be started by whitelisted user, and will appear' +
+                            ' as failed. Please wait for repo owner to start checks manually.'
+                            addComment(comment, upstreamEnv.CHANGE_ID)
                     } else {
-                            echo 'comment not added'
+                            echo 'No need to add comment. User whitelisted.'
                     }
                 }
             }
@@ -116,11 +122,10 @@ pipeline {
             }
         }
         stage('Run CI') {
-            // agent none
             steps {
                 script {
                     echo 'Started CI'
-                    // parallel parallelStages
+                    parallel parallelStages
                     }
             }
         }
