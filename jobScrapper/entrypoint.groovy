@@ -97,30 +97,15 @@ pipeline {
                     "Build user ID: <b>${upstreamEnv.BUILD_USER_ID}</b><br>" +
                     "Change author: <b>${upstreamEnv.CHANGE_AUTHOR}</b>"
 
-                    echo 'debug:'
-                    echo upstreamEnv.BUILD_USER_ID
-                    if (upstreamEnv.BUILD_USER_ID == 'wkobiela') {
-                        echo 'BUILD_USER_ID wkobiela'
-                    } else {
-                        echo 'BUILD_USER_ID nie lapie branchIndexing'
+                    // If pipeline is running automatically on master
+                    if (upstreamEnv.BUILD_USER_ID.toString() == 'branchIndexing' &&
+                    upstreamEnv.BUILD_USER_ID.toString() == 'null' &&
+                    upstreamEnv.CHANGE_ID.toString() == 'null') {
+                        echo 'Build started on master by branch indexing. No need to worry.'
                     }
-                    echo upstreamEnv.BUILD_USER_ID
-                    if (upstreamEnv.BUILD_USER_ID == 'wkobiela') {
-                        echo 'BUILD_USER_ID wkobiela'
-                    } else {
-                        echo 'BUILD_USER_ID nie lapie null'
-                    }
-                    echo upstreamEnv.CHANGE_ID
-                    if (upstreamEnv.CHANGE_ID == 'null') {
-                        echo 'CHANGE_ID null'
-                    } else {
-                        echo 'CHANGE_ID nie lapie null'
-                    }
-
-                    if ((!(whitelist.contains(upstreamEnv.CHANGE_AUTHOR)) ||
-                    !(whitelist.contains(upstreamEnv.BUILD_USER_ID))) ||
-                    !(upstreamEnv.BUILD_USER_ID == 'branchIndexing' && upstreamEnv.BUILD_USER_ID == 'null' &&
-                    upstreamEnv.CHANGE_ID == 'null')) {
+                    // if change NOT by whitelisted user, or build started NOT by whitelisted user
+                    else if (!(whitelist.contains(upstreamEnv.CHANGE_AUTHOR) ||
+                    !(whitelist.contains(upstreamEnv.BUILD_USER_ID)))) {
                         echo 'Author of commit not whiltelisted or build started by scheduler.'
 
                         comment = 'Jenkins checks need to be started by whitelisted user and will appear' +
@@ -128,6 +113,7 @@ pipeline {
 
                         addComment(comment, upstreamEnv.CHANGE_ID)
                         error 'User not whitelisted.'
+                    // Else we should be good
                     } else {
                         echo 'No need to add comment. User whitelisted.'
                     }
