@@ -97,6 +97,25 @@ pipeline {
                     "Build user ID: <b>${upstreamEnv.BUILD_USER_ID}</b><br>" +
                     "Change author: <b>${upstreamEnv.CHANGE_AUTHOR}</b>"
 
+                    echo 'debug:'
+                    if (upstreamEnv.BUILD_USER_ID == 'branchIndexing') {
+                        echo 'BUILD_USER_ID branchIndexing'
+                    } else {
+                        echo 'BUILD_USER_ID nie lapie branchIndexing'
+                    }
+
+                    if (upstreamEnv.BUILD_USER_ID == 'null') {
+                        echo 'BUILD_USER_ID null'
+                    } else {
+                        echo 'BUILD_USER_ID nie lapie null'
+                    }
+
+                    if (upstreamEnv.CHANGE_ID == 'null') {
+                        echo 'CHANGE_ID null'
+                    } else {
+                        echo 'CHANGE_ID nie lapie null'
+                    }
+
                     if ((!(whitelist.contains(upstreamEnv.CHANGE_AUTHOR)) ||
                     !(whitelist.contains(upstreamEnv.BUILD_USER_ID))) &&
                     !(upstreamEnv.BUILD_USER_ID == 'branchIndexing' && upstreamEnv.BUILD_USER_ID == 'null' &&
