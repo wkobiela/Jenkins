@@ -95,11 +95,9 @@ pipeline {
                     whitelist.contains(upstreamEnv.BUILD_USER_ID)) {
                             echo 'comment added'
                             //addComment('This PR was commented with API.', upstreamEnv.CHANGE_ID)
-                    else {
+                    } else {
                             echo 'comment not added'
-                        }
                     }
-
                 }
             }
         }
