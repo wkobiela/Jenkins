@@ -1,4 +1,4 @@
-/* groovylint-disable DuplicateStringLiteral, MethodReturnTypeRequired, NestedBlockDepth, NoDef */
+/* groovylint-disable , CompileStatic, DuplicateStringLiteral, MethodReturnTypeRequired, NestedBlockDepth */
 import hudson.EnvVars
 import hudson.model.Cause$UpstreamCause
 
@@ -59,7 +59,7 @@ def getUpstreamVars() {
             error 'Not triggered by an upstream cause. Finishing.'
         }
     } catch (Exception ex) {
-        echo "Exception while getting upstream vars: \n $ex"
+        error "Exception while getting upstream vars: \n $ex"
     }
 
     return upstreamEnv
@@ -101,7 +101,7 @@ pipeline {
                     whitelist.contains(upstreamEnv.BUILD_USER_ID)) {
                             echo 'Author of commit not whiltelisted or build started by scheduler.'
                             comment = 'Jenkins checks need to be started by whitelisted user, and will appear' +
-                            ' as failed. Please wait for repo owner to start checks manually.'
+                            ' as failed.\nPlease wait for repo owner to start checks manually.'
                             addComment(comment, upstreamEnv.CHANGE_ID)
                     } else {
                             echo 'No need to add comment. User whitelisted.'
