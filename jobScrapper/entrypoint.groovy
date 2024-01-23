@@ -8,6 +8,7 @@ pythonsArray = ['3.9', '3.10', '3.11', '3.12']
 runAndTestStage = 'jobScrapperCI/build_run_test'
 banditStage = 'jobScrapperCI/run_bandit'
 def upstreamEnv = new EnvVars()
+List whitelist = ['wkobiela']
 
 def generateStage(String job, String url, String commit, String changeid, String python) {
     String stageName = job.replace('jobScrapperCI/', '')
@@ -25,6 +26,21 @@ def generateStage(String job, String url, String commit, String changeid, String
                         ],
             wait: true
         }
+    }
+}
+
+void addComment(String comment, String number) {
+    try {
+        withCredentials([string(credentialsId: 'github_token', variable: 'TOKEN')]) {
+            cmd = """curl "https://api.github.com/repos/wkobiela/jobScrapper/issues/${number}/comments" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: token """ + TOKEN + """\" \
+            -X POST \
+            -d "{\\"body\\": \\"${comment}\\"}\""""
+            sh label: 'Add comment to Github PR', script: cmd
+        }
+    } catch (Exception ex) {
+        echo "Cannot add comment.\nException: $e"
     }
 }
 
@@ -54,14 +70,14 @@ pipeline {
                 }
             }
         }
-        stage('Generate jobs') {
+        stage('Check changeset') {
             steps {
                 echo 'INFORMATION FROM SCM:\n' +
-                "URL: ${params.GIT_URL} \n" +
-                "Commit: ${params.GIT_COMMIT} \n" +
-                "Change ID: ${upstreamEnv.CHANGE_ID} \n" +
-                "Build user ID: ${upstreamEnv.BUILD_USER_ID} \n" +
-                "Change author: ${upstreamEnv.CHANGE_AUTHOR}"
+                    "URL: ${params.GIT_URL} \n" +
+                    "Commit: ${params.GIT_COMMIT} \n" +
+                    "Change ID: ${upstreamEnv.CHANGE_ID} \n" +
+                    "Build user ID: ${upstreamEnv.BUILD_USER_ID} \n" +
+                    "Change author: ${upstreamEnv.CHANGE_AUTHOR}"
                 script {
                     currentBuild.description =
                     "URL: <a href='${params.GIT_URL}'>${params.GIT_URL}</a><br>" +
@@ -70,6 +86,14 @@ pipeline {
                     "Build user ID: <b>${upstreamEnv.BUILD_USER_ID}</b><br>" +
                     "Change author: <b>${upstreamEnv.CHANGE_AUTHOR}</b>"
 
+                    addComment('This PR was commented with API.', upstreamEnv.CHANGE_ID)
+
+                }
+            }
+        }
+        stage('Generate jobs') {
+            steps {
+                script {
                     pythonsArray.each { py ->
                         parallelStages.put("${runAndTestStage}_python${py}",
                         generateStage(runAndTestStage, params.GIT_URL, params.GIT_COMMIT, upstreamEnv.CHANGE_ID, py))
@@ -84,7 +108,7 @@ pipeline {
             steps {
                 script {
                     echo 'Started CI'
-                    parallel parallelStages
+                    // parallel parallelStages
                     }
             }
         }
