@@ -99,8 +99,8 @@ pipeline {
 
                     // If pipeline is running automatically on master
                     if (upstreamEnv.BUILD_USER_ID.toString() == 'branchIndexing' &&
-                    upstreamEnv.BUILD_USER_ID.toString() == 'null' &&
-                    upstreamEnv.CHANGE_ID.toString() == 'null') {
+                    upstreamEnv.BUILD_USER_ID.isEmpty() &&
+                    upstreamEnv.CHANGE_ID.isEmpty()) {
                         echo 'Build started on master by branch indexing. No need to worry.'
                     }
                     // if change author or build starting user is whitelisted
