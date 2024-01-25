@@ -97,9 +97,15 @@ pipeline {
                     "Build user ID: <b>${upstreamEnv.BUILD_USER_ID}</b><br>" +
                     "Change author: <b>${upstreamEnv.CHANGE_AUTHOR}</b>"
 
+                    if (upstreamEnv.CHANGE_ID.isEmpty()) {
+                        echo 'CHANGE_ID is empty
+                    }
+                    if (upstreamEnv.CHANGE_AUTHOR.isEmpty()) {
+                        echo 'CHANGE_AUTHOR is empty
+                    }
                     // If pipeline is running automatically on master
                     if (upstreamEnv.BUILD_USER_ID.toString() == 'branchIndexing' &&
-                    upstreamEnv.BUILD_USER_ID.isEmpty() &&
+                    upstreamEnv.CHANGE_AUTHOR.isEmpty() &&
                     upstreamEnv.CHANGE_ID.isEmpty()) {
                         echo 'Build started on master by branch indexing. No need to worry.'
                     }
