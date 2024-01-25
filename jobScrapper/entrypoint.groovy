@@ -97,16 +97,16 @@ pipeline {
                     "Build user ID: <b>${upstreamEnv.BUILD_USER_ID}</b><br>" +
                     "Change author: <b>${upstreamEnv.CHANGE_AUTHOR}</b>"
 
-                    if (upstreamEnv.CHANGE_ID.isEmpty()) {
-                        echo 'CHANGE_ID is empty'
+                    if (upstreamEnv.CHANGE_ID == null) {
+                        echo 'CHANGE_ID == null'
                     }
-                    if (upstreamEnv.CHANGE_AUTHOR.isEmpty()) {
-                        echo 'CHANGE_AUTHOR is empty'
+                    if (upstreamEnv.CHANGE_AUTHOR == null) {
+                        echo 'CHANGE_AUTHOR == null'
                     }
                     // If pipeline is running automatically on master
                     if (upstreamEnv.BUILD_USER_ID.toString() == 'branchIndexing' &&
-                    upstreamEnv.CHANGE_AUTHOR.isEmpty() &&
-                    upstreamEnv.CHANGE_ID.isEmpty()) {
+                    upstreamEnv.CHANGE_AUTHOR == null &&
+                    upstreamEnv.CHANGE_ID == null) {
                         echo 'Build started on master by branch indexing. No need to worry.'
                     }
                     // if change author or build starting user is whitelisted
