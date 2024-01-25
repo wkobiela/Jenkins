@@ -97,12 +97,6 @@ pipeline {
                     "Build user ID: <b>${upstreamEnv.BUILD_USER_ID}</b><br>" +
                     "Change author: <b>${upstreamEnv.CHANGE_AUTHOR}</b>"
 
-                    if (upstreamEnv.CHANGE_ID == null) {
-                        echo 'CHANGE_ID == null'
-                    }
-                    if (upstreamEnv.CHANGE_AUTHOR == null) {
-                        echo 'CHANGE_AUTHOR == null'
-                    }
                     // If pipeline is running automatically on master
                     if (upstreamEnv.BUILD_USER_ID.toString() == 'branchIndexing' &&
                     upstreamEnv.CHANGE_AUTHOR == null &&
