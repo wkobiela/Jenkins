@@ -98,10 +98,10 @@ pipeline {
                     "Change author: <b>${upstreamEnv.CHANGE_AUTHOR}</b>"
 
                     if (upstreamEnv.CHANGE_ID.isEmpty()) {
-                        echo 'CHANGE_ID is empty
+                        echo 'CHANGE_ID is empty'
                     }
                     if (upstreamEnv.CHANGE_AUTHOR.isEmpty()) {
-                        echo 'CHANGE_AUTHOR is empty
+                        echo 'CHANGE_AUTHOR is empty'
                     }
                     // If pipeline is running automatically on master
                     if (upstreamEnv.BUILD_USER_ID.toString() == 'branchIndexing' &&
