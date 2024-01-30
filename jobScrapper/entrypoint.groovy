@@ -7,7 +7,7 @@ pythonsArray = ['3.9', '3.10', '3.11', '3.12']
 runAndTestStage = 'jobScrapperCI/build_run_test'
 banditStage = 'jobScrapperCI/run_bandit'
 def upstreamEnv = new EnvVars()
-List whitelist = ['wkobiela', 'dependabot']
+List whitelist = ['wkobiela', 'dependabot[bot]']
 
 def generateStage(String job, String url, String commit, String changeid, String python) {
     String stageName = job.replace('jobScrapperCI/', '')
