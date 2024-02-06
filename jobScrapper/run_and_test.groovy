@@ -75,7 +75,7 @@ podTemplate(
                     sh "python${params.Python} -m pip install --cache-dir=/mnt/pip_cache ${wheelFilename}"
                 }
                 stage('Run scrapper') {
-                    sh 'jobscrapper --config jobscrapper/config.json'
+                    sh 'jobscrapper --config jobscrapper/config.json --loglevel DEBUG'
                     command = 'cat debug.log'
                     out = sh(script: command, returnStdout: true).trim()
                     String searchTermRegex = /(?i)(exception|error|ERROR)/
