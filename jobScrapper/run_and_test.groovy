@@ -92,7 +92,7 @@ podTemplate(
                 }
                 stage('Run tests') {
                     result = sh(script: "python${params.Python} -m pytest --html=report.html --cov-report term \
-                    --cov-report html --cov=jobscrapper", returnStatus: true)
+                    --cov-config=.coveragerc --cov-report html --cov=jobscrapper", returnStatus: true)
                     if (result != 0) {
                             unstable('Test stage exited with non zero exit code.')
                             testsFailed = true
