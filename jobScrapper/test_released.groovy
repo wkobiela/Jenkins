@@ -16,7 +16,7 @@ void createIssue(String comment, String number) {
 podTemplate(
     containers: [
     containerTemplate(
-        name: 'jobscrapper_released',
+        name: 'jobscrapper-released',
         image: 'wkobiela/jobscrapper_base:latest',
         alwaysPullImage: true,
         command: 'sleep',
@@ -36,7 +36,7 @@ podTemplate(
         runAsUser: '1001'
         ) {
     node(POD_LABEL) {
-        container('jobscrapper_released') {
+        container('jobscrapper-released') {
             try {
                 stage('Install released product from pypi') {
                     sh 'python3 --version'
