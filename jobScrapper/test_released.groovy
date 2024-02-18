@@ -7,8 +7,8 @@ void publishIssue(String title, String body) {
                     https://api.github.com/repos/wkobiela/jobscrapper/issues'
 
         result = sh(script: verify_cmd, returnStdout: true).trim()
-        if (result.contains(title_test)) {
-            println("Issue with \"$title_test\" already exists")
+        if (result.contains(title)) {
+            println("Issue with \"$title\" already exists")
         } else {
             withCredentials([string(credentialsId: 'github_token', variable: 'TOKEN')]) {
                 cmd = """curl "https://api.github.com/repos/wkobiela/jobScrapper/issues/" \
