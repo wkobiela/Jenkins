@@ -89,7 +89,7 @@ podTemplate(
                 }
                 stage('Verify init option') {
                     sh 'jobscrapper --init'
-                    code = sh (script: 'test -f config2.json && echo "config2.json exists."', returnStatus: true)
+                    code = sh (script: 'test -f config.json && echo "config.json exists."', returnStatus: true)
                     if (code != 0) {
                         String init_thread = "[automatic checks] Creating init config.json file do not work"
                         publishIssue(init_thread, default_body)
