@@ -47,7 +47,10 @@ podTemplate(
                             ' --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/' +
                             ' jobscrapper'
                     sh script: cmd
-                    sh 'python3 -m pip install --cache-dir=/mnt/pip_cache --upgrade jobscrapper'
+                    cmd2 = 'python3 -m pip install --cache-dir=/mnt/pip_cache' +
+                            ' --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/' +
+                            '--upgrade jobscrapper'
+                    sh script: cmd2
                 }
                 stage('Verify basic run') {
                     try {
@@ -65,8 +68,26 @@ podTemplate(
                     sh 'test -f config.json && echo "config.json exists."'
                 }
                 stage('Verify run option') {
-                    sh 'jobscrapper --config config.json'
+                    command = 'jobscrapper --config config.json'
                     // verify output here, if every scrapper works correctly
+                    out = sh(script: command, returnStdout: true).trim()
+
+                    String pattern = /updateExcel: (.*?) new offers in (.*?)!/
+                    results = (out =~ pattern).findAll()
+                    // verify, if found 3 matches
+                    if (results.size() == 3) {
+                        println("Found 3 matches")
+                    } else {
+                        error "ERROR: Found only ${results.size()} matches. Verify regex and scrapper operation."
+                    }
+                    // verify, if values are greater than 0
+                    for (item in results) {
+                        if (item[1].toInteger() > 0) {
+                            println("Found ${item[1]} offers using ${item[2]} scrapper.")
+                        } else {
+                            error "ERROR: ${item[2]} scrapper seems to malfunction!"
+                        }
+                    }
                 }
                 stage('Verify run option with debug') {
                     sh 'jobscrapper --config config.json --loglevel DEBUG'
