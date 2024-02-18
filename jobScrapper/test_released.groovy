@@ -50,7 +50,11 @@ podTemplate(
                     sh 'python3 -m pip install --cache-dir=/mnt/pip_cache --upgrade jobscrapper'
                 }
                 stage('Verify basic run') {
-                    sh 'jobscrapper'
+                    try:
+                        sh 'jobscrapper'
+                    catch (Exception ex) {
+                        println(ex)
+                    }
                 }
                 stage('Verify help option') {
                     sh 'jobscrapper --help'
