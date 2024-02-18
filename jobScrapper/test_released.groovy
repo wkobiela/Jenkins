@@ -61,29 +61,38 @@ podTemplate(
                     }
                 }
                 stage('Verify help option') {
-                    sh 'jobscrapper --help'
+                    sh 'jobscrapper --help 2>&1 | tee help_log.txt'
+                    out1 = sh(script: 'cat help_log.txt', returnStdout: true).trim()
+
+                    String pattern1 = /(?:^|\W)usage(?:$|\W)/
+                    results1 = (out1 =~ pattern1).findAll()
+                    if (results1.size() == 1) {
+                        println("Found ${results1.size()} matches, help seems to work.")
+                    } else {
+                        error "ERROR: Found ${results1.size()} matches. Verify scrapper help option."
+                    }
                 }
                 stage('Verify init option') {
                     sh 'jobscrapper --init'
                     sh 'test -f config.json && echo "config.json exists."'
                 }
                 stage('Verify run option') {
-                    command = 'jobscrapper --config config.json 2>&1 | tee saved_log.txt'
+                    command = 'jobscrapper --config config.json 2>&1 | tee run_log.txt'
                     // verify output here, if every scrapper works correctly
                     sh script: command
 
-                    out = sh(script: 'cat saved_log.txt', returnStdout: true).trim()
+                    out2 = sh(script: 'cat run_log.txt', returnStdout: true).trim()
 
-                    String pattern = /updateExcel: (.*?) new offers in (.*?)!/
-                    results = (out =~ pattern).findAll()
+                    String pattern2 = /updateExcel: (.*?) new offers in (.*?)!/
+                    results2 = (out2 =~ pattern2).findAll()
                     // verify, if found 3 matches
-                    if (results.size() == 3) {
+                    if (results2.size() == 3) {
                         println('Found 3 matches')
                     } else {
                         error "ERROR: Found only ${results.size()} matches. Verify regex and scrapper operation."
                     }
                     // verify, if values are greater than 0
-                    for (item in results) {
+                    for (item in results2) {
                         if (item[1].toInteger() > 0) {
                             println("Found ${item[1]} offers using ${item[2]} scrapper.")
                         } else {
@@ -95,14 +104,14 @@ podTemplate(
                     sh 'jobscrapper --config config.json --loglevel DEBUG'
                     // verify output here, if DEBUG logs are showing
                     sh 'test -f debug.log && echo "debug.log exists."'
-                    out2 = sh(script: 'cat debug.log', returnStdout: true).trim()
+                    out3 = sh(script: 'cat debug.log', returnStdout: true).trim()
 
-                    String pattern2 = /(?:^|\W)DEBUG(?:$|\W)/
-                    results2 = (out2 =~ pattern2).findAll()
-                    if (results2.size() > 0) {
-                        println("Found ${results2.size()} matches")
+                    String pattern3 = /(?:^|\W)DEBUG(?:$|\W)/
+                    results3 = (out3 =~ pattern3).findAll()
+                    if (results3.size() > 0) {
+                        println("Found ${results3.size()} matches")
                     } else {
-                        error "ERROR: Found ${results2.size()} matches. Verify scrapper DEBUG logging."
+                        error "ERROR: Found ${results3.size()} matches. Verify scrapper DEBUG logging."
                     }
                 }
             } catch (Exception ex) {
