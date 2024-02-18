@@ -41,8 +41,10 @@ podTemplate(
                 stage('Install released product from pypi') {
                     sh 'python3 --version'
                     sh 'python3 -m pip install --cache-dir=/mnt/pip_cache --upgrade pip'
-                    sh 'python3 -m pip install --cache-dir=/mnt/pip_cache --index-url https://test.pypi.org/simple/' \
-                        ' --extra-index-url https://pypi.org/simple/ jobscrapper'
+                    cmd = 'python3 -m pip install --cache-dir=/mnt/pip_cache' +
+                            ' --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/' +
+                            ' jobscrapper'
+                    sh script: cmd
                 }
             } catch (Exception ex) {
                 error("Build failed. $ex")
