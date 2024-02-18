@@ -8,7 +8,7 @@ void publishIssue(String title, String body) {
 
         result = sh(script: verify_cmd, returnStdout: true).trim()
         if (result.contains(title)) {
-            println("Issue with \"$title\" already exists")
+            println("Issue with \"$title\" title already exists")
         } else {
             withCredentials([string(credentialsId: 'github_token', variable: 'TOKEN')]) {
                 cmd = """curl "https://api.github.com/repos/wkobiela/jobscrapper/issues" \
@@ -89,7 +89,14 @@ podTemplate(
                 }
                 stage('Verify init option') {
                     sh 'jobscrapper --init'
-                    sh 'test -f config.json && echo "config.json exists."'
+                    code = sh (script: 'test -f config2.json && echo "config2.json exists."', returnStatus: true)
+                    if (code != 0) {
+                        println("Not zero")
+                        println(code)
+                    } else {
+                        println("Zero code")
+                        println(code)
+                    }
                 }
                 stage('Verify run option') {
                     command = 'jobscrapper --config config.json 2>&1 | tee run_log.txt'
