@@ -6,13 +6,13 @@ void publishIssue(String title, String body) {
                     -H "Accept: application/vnd.github+json" \
                     https://api.github.com/repos/wkobiela/jobscrapper/issues'
 
-        result = sh(script: verifyScript, returnStdout: true).trim()
+        result = sh(script: verify_cmd, returnStdout: true).trim()
 
         println(result)
         title_test = 'Program exits with exit code 1, when no parameter is given'
         if (result.contains(title_test)) {
             println('Yes it is!!')
-        }
+        } 
         // withCredentials([string(credentialsId: 'github_token', variable: 'TOKEN')]) {
         //     cmd = """curl "https://api.github.com/repos/wkobiela/jobScrapper/issues/" \
         //     -H "Content-Type: application/json" \
