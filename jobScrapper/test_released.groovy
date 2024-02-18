@@ -1,19 +1,32 @@
-/* groovylint-disable DuplicateStringLiteral, NestedBlockDepth */
+/* groovylint-disable DuplicateStringLiteral, NestedBlockDepth, UnnecessaryGString */
 
-void publishIssue(String comment, String number) {
+void publishIssue(String title, String body) {
     try {
-        withCredentials([string(credentialsId: 'github_token', variable: 'TOKEN')]) {
-            cmd = """curl "https://api.github.com/repos/wkobiela/jobScrapper/issues/${number}/comments" \
-            -H "Content-Type: application/json" \
-            -H "Authorization: token """ + TOKEN + """\" \
-            -X POST \
-            -d "{\\"body\\": \\"${comment}\\"}\""""
-            sh label: 'Add comment to Github PR', script: cmd
+        verify_cmd = 'curl -L \
+                    -H "Accept: application/vnd.github+json" \
+                    https://api.github.com/repos/wkobiela/jobscrapper/issues'
+
+        result = sh(script: verifyScript, returnStdout: true).trim()
+
+        println(result)
+        title_test = 'Program exits with exit code 1, when no parameter is given'
+        if (result.contains(title_test)) {
+            println('Yes it is!!')
         }
+        // withCredentials([string(credentialsId: 'github_token', variable: 'TOKEN')]) {
+        //     cmd = """curl "https://api.github.com/repos/wkobiela/jobScrapper/issues/" \
+        //     -H "Content-Type: application/json" \
+        //     -H "Authorization: token """ + TOKEN + """\" \
+        //     -X POST \
+        //     -d "{\\"title\\":\\"${title}\\",\\"body\\": \\"${body}\\",\\"labels\\":[\\"bug\\"]}\""""
+        //     sh label: 'Add comment to Github PR', script: cmd
+        // }
     } catch (Exception ex) {
-        echo "Cannot add comment. \n $ex"
+        echo "Cannot create issue. \n $ex"
     }
 }
+
+String default_body = "Automatic checks alarming failure. Check: $BUILD_URL"
 
 podTemplate(
     containers: [
@@ -57,6 +70,8 @@ podTemplate(
                         sh 'jobscrapper'
                     }
                     catch (Exception ex) {
+                        String basic_thread = '[automatic checks] Basic scrapper call failed'
+                        publishIssue(basic_thread, default_body)
                         println(ex)
                     }
                 }
@@ -69,6 +84,8 @@ podTemplate(
                     if (results1.size() == 1) {
                         println("Found ${results1.size()} matches, help seems to work.")
                     } else {
+                        String help_thread = '[automatic checks] --help option is not working'
+                        publishIssue(help_thread, default_body)
                         error "ERROR: Found ${results1.size()} matches. Verify scrapper help option."
                     }
                 }
@@ -89,6 +106,8 @@ podTemplate(
                     if (results2.size() == 3) {
                         println('Found 3 matches')
                     } else {
+                        String run_thread = '[automatic checks] One of scrappers is not working'
+                        publishIssue(run_thread, default_body)
                         error "ERROR: Found only ${results.size()} matches. Verify regex and scrapper operation."
                     }
                     // verify, if values are greater than 0
@@ -96,14 +115,16 @@ podTemplate(
                         if (item[1].toInteger() > 0) {
                             println("Found ${item[1]} offers using ${item[2]} scrapper.")
                         } else {
+                            String run_thread = "[automatic checks] ${item[2]} scrapper is not working"
+                            publishIssue(run_thread, default_body)
                             error "ERROR: ${item[2]} scrapper seems to malfunction!"
                         }
                     }
                 }
                 stage('Verify run option with debug') {
                     sh 'jobscrapper --config config.json --loglevel DEBUG'
-                    // verify output here, if DEBUG logs are showing
                     sh 'test -f debug.log && echo "debug.log exists."'
+                    
                     out3 = sh(script: 'cat debug.log', returnStdout: true).trim()
 
                     String pattern3 = /(?:^|\W)DEBUG(?:$|\W)/
@@ -111,6 +132,8 @@ podTemplate(
                     if (results3.size() > 0) {
                         println("Found ${results3.size()} matches")
                     } else {
+                        String debug_thread = "[automatic checks] Debug logging is not working"
+                        publishIssue(debug_thread, default_body)
                         error "ERROR: Found ${results3.size()} matches. Verify scrapper DEBUG logging."
                     }
                 }
