@@ -1,4 +1,6 @@
-void createIssue(String comment, String number) {
+/* groovylint-disable DuplicateStringLiteral, NestedBlockDepth */
+
+void publishIssue(String comment, String number) {
     try {
         withCredentials([string(credentialsId: 'github_token', variable: 'TOKEN')]) {
             cmd = """curl "https://api.github.com/repos/wkobiela/jobScrapper/issues/${number}/comments" \
@@ -45,6 +47,24 @@ podTemplate(
                             ' --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/' +
                             ' jobscrapper'
                     sh script: cmd
+                }
+                stage('Verify basic run') {
+                    sh 'jobscrapper'
+                }
+                stage('Verify help option') {
+                    sh 'jobscrapper --help'
+                }
+                stage('Verify init option') {
+                    sh 'jobscrapper --init'
+                    sh 'test -f config.json && echo "config.json exists."'
+                }
+                stage('Verify run option') {
+                    sh 'jobscrapper --config config.json'
+                    // verify output here, if every scrapper works correctly
+                }
+                stage('Verify run option with debug') {
+                    sh 'jobscrapper --config config.json --loglevel DEBUG'
+                    // verify output here, if DEBUG logs are showing
                 }
             } catch (Exception ex) {
                 error("Build failed. $ex")
