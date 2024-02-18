@@ -73,13 +73,12 @@ podTemplate(
                     sh script: command
 
                     out = sh(script: 'cat saved_log.txt', returnStdout: true).trim()
-                    println(out)
 
                     String pattern = /updateExcel: (.*?) new offers in (.*?)!/
                     results = (out =~ pattern).findAll()
                     // verify, if found 3 matches
                     if (results.size() == 3) {
-                        println("Found 3 matches")
+                        println('Found 3 matches')
                     } else {
                         error "ERROR: Found only ${results.size()} matches. Verify regex and scrapper operation."
                     }
@@ -95,10 +94,20 @@ podTemplate(
                 stage('Verify run option with debug') {
                     sh 'jobscrapper --config config.json --loglevel DEBUG'
                     // verify output here, if DEBUG logs are showing
+                    sh 'test -f debug.log && echo "debug.log exists."'
+                    out2 = sh(script: 'cat debug.log', returnStdout: true).trim()
+
+                    String pattern2 = /(?:^|\W)DEBUG(?:$|\W)/
+                    results2 = (out2 =~ pattern2).findAll()
+                    if (results2.size() > 0) {
+                        println("Found ${results2.size()} matches")
+                    } else {
+                        error "ERROR: Found ${results2.size()} matches. Verify scrapper DEBUG logging."
+                    }
                 }
             } catch (Exception ex) {
                 error("Build failed. $ex")
             }
         }
     }
-}
+        }
