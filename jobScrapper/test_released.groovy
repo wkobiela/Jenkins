@@ -68,10 +68,11 @@ podTemplate(
                     sh 'test -f config.json && echo "config.json exists."'
                 }
                 stage('Verify run option') {
-                    command = 'jobscrapper --config config.json'
+                    command = 'jobscrapper --config config.json 2>&1 | tee saved_log.txt'
                     // verify output here, if every scrapper works correctly
-                    out = sh(script: command, returnStdout: true).trim()
+                    sh script: command
 
+                    out = sh(script: 'cat saved_log.txt', returnStdout: true).trim()
                     println(out)
 
                     String pattern = /updateExcel: (.*?) new offers in (.*?)!/
