@@ -11,12 +11,12 @@ void publishIssue(String title, String body) {
             println("Issue with \"$title\" already exists")
         } else {
             withCredentials([string(credentialsId: 'github_token', variable: 'TOKEN')]) {
-                cmd = """curl "https://api.github.com/repos/wkobiela/jobScrapper/issues/" \
+                cmd = """curl "https://api.github.com/repos/wkobiela/jobscrapper/issues" \
                 -H "Content-Type: application/json" \
                 -H "Authorization: token """ + TOKEN + """\" \
                 -X POST \
                 -d "{\\"title\\":\\"${title}\\",\\"body\\": \\"${body}\\",\\"labels\\":[\\"bug\\"]}\""""
-                sh label: 'Add comment to Github PR', script: cmd
+                sh script: cmd
             }
         }
     } catch (Exception ex) {
