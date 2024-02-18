@@ -72,6 +72,8 @@ podTemplate(
                     // verify output here, if every scrapper works correctly
                     out = sh(script: command, returnStdout: true).trim()
 
+                    println(out)
+
                     String pattern = /updateExcel: (.*?) new offers in (.*?)!/
                     results = (out =~ pattern).findAll()
                     // verify, if found 3 matches
