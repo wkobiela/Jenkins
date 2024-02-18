@@ -67,6 +67,7 @@ podTemplate(
                     try {
                         sh 'jobscrapper'
                     }
+                    // to be updated, when exit code is fixed
                     catch (Exception ex) {
                         String basic_thread = '[automatic checks] Basic scrapper call failed'
                         publishIssue(basic_thread, default_body)
@@ -89,18 +90,16 @@ podTemplate(
                 }
                 stage('Verify init option') {
                     sh 'jobscrapper --init'
-                    code = sh (script: 'test -f config.json && echo "config.json exists."', returnStatus: true)
-                    if (code != 0) {
+                    code1 = sh (script: 'test -f config.json && echo "config.json exists."', returnStatus: true)
+                    if (code1 != 0) {
                         String init_thread = "[automatic checks] Creating init config.json file do not work"
                         publishIssue(init_thread, default_body)
                         error "ERROR: --init option is not working"
                     }
                 }
                 stage('Verify run option') {
-                    command = 'jobscrapper --config config.json 2>&1 | tee run_log.txt'
-                    // verify output here, if every scrapper works correctly
-                    sh script: command
-
+                    sh 'jobscrapper --config config.json 2>&1 | tee run_log.txt'
+                    
                     out2 = sh(script: 'cat run_log.txt', returnStdout: true).trim()
 
                     String pattern2 = /updateExcel: (.*?) new offers in (.*?)!/
