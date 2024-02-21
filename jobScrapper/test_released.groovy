@@ -60,7 +60,7 @@ podTemplate(
                     sh script: cmd
                     cmd2 = 'python3 -m pip install --cache-dir=/mnt/pip_cache' +
                             ' --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/' +
-                            '--upgrade jobscrapper'
+                            ' --upgrade jobscrapper'
                     sh script: cmd2
                 }
                 stage('Verify basic run') {
