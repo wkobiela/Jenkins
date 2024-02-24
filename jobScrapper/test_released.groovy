@@ -74,7 +74,7 @@ podTemplate(
                     }
                     else {
                         String basic_thread = '[automatic checks] Basic scrapper call failed'
-                        // publishIssue(basic_thread, default_body)
+                        publishIssue(basic_thread, default_body)
                         error "ERROR: Found ${results.size()} matches. Verify scrapper basic call."
                     }
                 }
