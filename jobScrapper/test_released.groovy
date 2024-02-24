@@ -64,14 +64,18 @@ podTemplate(
                     sh script: cmd2
                 }
                 stage('Verify basic run') {
-                    try {
-                        sh 'jobscrapper'
+                    sh 'jobscrapper 2>&1 | tee basic_log.txt'
+                    out = sh(script: 'cat basic_log.txt', returnStdout: true).trim()
+
+                    String pattern = /(?:^|\W)--help(?:$|\W)/
+                    results = (out =~ pattern).findAll()
+                    if (results.size() == 1) {
+                        println("Found ${results.size()} matches, basic run seems to work.")
                     }
-                    // to be updated, when exit code is fixed
-                    catch (Exception ex) {
+                    else {
                         String basic_thread = '[automatic checks] Basic scrapper call failed'
                         publishIssue(basic_thread, default_body)
-                        println(ex)
+                        error "ERROR: Found ${results.size()} matches. Verify scrapper basic call."
                     }
                 }
                 stage('Verify help option') {
@@ -90,7 +94,7 @@ podTemplate(
                 }
                 stage('Verify init option') {
                     sh 'jobscrapper --init'
-                    code1 = sh (script: 'test -f config.json && echo "config.json exists."', returnStatus: true)
+                    code1 = sh(script: 'test -f config.json && echo "config.json exists."', returnStatus: true)
                     if (code1 != 0) {
                         String init_thread = "[automatic checks] Creating init config.json file do not work"
                         publishIssue(init_thread, default_body)
@@ -98,8 +102,7 @@ podTemplate(
                     }
                 }
                 stage('Verify run option') {
-                    sh 'jobscrapper --config config.json 2>&1 | tee run_log.txt'
-                    
+                    sh 'jobscrapper --config config.json 2>&1 | tee run_log.txt'                    
                     out2 = sh(script: 'cat run_log.txt', returnStdout: true).trim()
 
                     String pattern2 = /updateExcel: (.*?) new offers in (.*?)!/
@@ -126,7 +129,6 @@ podTemplate(
                 stage('Verify run option with debug') {
                     sh 'jobscrapper --config config.json --loglevel DEBUG'
                     sh 'test -f debug.log && echo "debug.log exists."'
-                    
                     out3 = sh(script: 'cat debug.log', returnStdout: true).trim()
 
                     String pattern3 = /(?:^|\W)DEBUG(?:$|\W)/
