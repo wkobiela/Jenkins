@@ -94,7 +94,7 @@ podTemplate(
                 }
                 stage('Verify init option') {
                     sh 'jobscrapper --init'
-                    code1 = sh (script: 'test -f config.json && echo "config.json exists."', returnStatus: true)
+                    code1 = sh(script: 'test -f config.json && echo "config.json exists."', returnStatus: true)
                     if (code1 != 0) {
                         String init_thread = "[automatic checks] Creating init config.json file do not work"
                         publishIssue(init_thread, default_body)
@@ -102,8 +102,7 @@ podTemplate(
                     }
                 }
                 stage('Verify run option') {
-                    sh 'jobscrapper --config config.json 2>&1 | tee run_log.txt'
-                    
+                    sh 'jobscrapper --config config.json 2>&1 | tee run_log.txt'                    
                     out2 = sh(script: 'cat run_log.txt', returnStdout: true).trim()
 
                     String pattern2 = /updateExcel: (.*?) new offers in (.*?)!/
@@ -130,7 +129,6 @@ podTemplate(
                 stage('Verify run option with debug') {
                     sh 'jobscrapper --config config.json --loglevel DEBUG'
                     sh 'test -f debug.log && echo "debug.log exists."'
-                    
                     out3 = sh(script: 'cat debug.log', returnStdout: true).trim()
 
                     String pattern3 = /(?:^|\W)DEBUG(?:$|\W)/
