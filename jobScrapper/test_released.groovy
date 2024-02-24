@@ -71,6 +71,7 @@ podTemplate(
                     results = (out =~ pattern).findAll()
                     if (results.size() == 1) {
                         println("Found ${results.size()} matches, basic run seems to work.")
+                    }
                     else {
                         String basic_thread = '[automatic checks] Basic scrapper call failed'
                         // publishIssue(basic_thread, default_body)
