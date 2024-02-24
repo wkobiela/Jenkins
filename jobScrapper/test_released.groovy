@@ -64,14 +64,17 @@ podTemplate(
                     sh script: cmd2
                 }
                 stage('Verify basic run') {
-                    try {
-                        sh 'jobscrapper'
-                    }
-                    // to be updated, when exit code is fixed
-                    catch (Exception ex) {
+                    sh 'jobscrapper 2>&1 | tee basic_log.txt'
+                    out = sh(script: 'cat basic_log.txt', returnStdout: true).trim()
+
+                    String pattern = /(?:^|\W)--help(?:$|\W)/
+                    results = (out =~ pattern).findAll()
+                    if (results.size() == 1) {
+                        println("Found ${results.size()} matches, basic run seems to work.")
+                    else {
                         String basic_thread = '[automatic checks] Basic scrapper call failed'
-                        publishIssue(basic_thread, default_body)
-                        println(ex)
+                        // publishIssue(basic_thread, default_body)
+                        error "ERROR: Found ${results.size()} matches. Verify scrapper basic call."
                     }
                 }
                 stage('Verify help option') {
