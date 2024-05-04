@@ -1,6 +1,9 @@
 node(params.NodeSelector) {
     currentBuild.displayName = "#$env.BUILD_NUMBER node: $env.NODE_NAME"
+
     def image
+    String imageTag = params.ImageTag ?: 'latest'
+
     stage('Clean') {
         println('============================================ CLEAN STAGE ============================================')
         cleanWs()
@@ -48,7 +51,7 @@ node(params.NodeSelector) {
         println('============================================ PUSH STAGE =============================================')
         try {
             docker.withRegistry('', 'dockerhub') {
-                image.push("latest")
+                image.push(imageTag)
             }
         } catch (Exception e) {
             error "Stage failed with exception $e"
