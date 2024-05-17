@@ -39,6 +39,7 @@ podTemplate(
         resourceLimitCpu: '2',
         resourceRequestMemory: '2Gi',
         resourceLimitMemory: '3Gi',
+        resourceRequestEphemeralStorage: '2Gi',
         )],
         volumes: [
         persistentVolumeClaim(
