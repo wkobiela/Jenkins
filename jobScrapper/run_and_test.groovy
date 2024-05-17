@@ -35,10 +35,10 @@ podTemplate(
         alwaysPullImage: true,
         command: 'sleep',
         args: '99d',
-        resourceRequestCpu: '700m',
-        resourceLimitCpu: '1',
-        resourceRequestMemory: '1Gi',
-        resourceLimitMemory: '1Gi',
+        resourceRequestCpu: '1',
+        resourceLimitCpu: '2',
+        resourceRequestMemory: '2Gi',
+        resourceLimitMemory: '3Gi',
         )],
         volumes: [
         persistentVolumeClaim(
