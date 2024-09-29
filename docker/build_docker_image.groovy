@@ -25,7 +25,7 @@ node(params.NodeSelector) {
             dir("$env.WORKSPACE/Dockerfiles") {
                 sh label: 'Check last commit', script: 'git log -1'
                 if (params.RepoBranch) {
-                    sh label: 'Checkout branch', script: "fit fetch && git checkout $RepoBranch"
+                    sh label: 'Checkout branch', script: "git fetch && git checkout $RepoBranch"
                 }
             }
         } catch (Exception e) {
