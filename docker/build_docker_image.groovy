@@ -1,7 +1,9 @@
 node(params.NodeSelector) {
     currentBuild.displayName = "#$env.BUILD_NUMBER node: $env.NODE_NAME"
 
-    def image
+    if (!params.ImageName) {
+        throw new IllegalArgumentException("Error: ImageName parameter is not set.")
+    }
     String imageTag = params.ImageTag ?: 'latest'
 
     stage('Clean') {
@@ -49,9 +51,15 @@ node(params.NodeSelector) {
     }
     stage('Push image') {
         println('============================================ PUSH STAGE =============================================')
+        def tagsList = imageTag.tokenize(',')
+        echo "Tags list: ${tagsList}"
+        // pushing to DockerHub
         try {
             docker.withRegistry('', 'dockerhub') {
-                image.push(imageTag)
+                tagsList.each { tag ->
+                    echo "Pushing image with tag: ${tag}"
+                    image.push(tag)
+                }
             }
         } catch (Exception e) {
             error "Stage failed with exception $e"
