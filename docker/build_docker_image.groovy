@@ -4,7 +4,7 @@ node(params.NodeSelector) {
     if (!params.ImageName) {
         throw new IllegalArgumentException("Error: ImageName parameter is not set.")
     }
-    String imageTag = params.ImageTag ?: 'latest'
+    String imageTag = params.ImageTag.replaceAll(/\s+/, '').trim() ?: 'latest'
 
     stage('Clean') {
         println('============================================ CLEAN STAGE ============================================')
