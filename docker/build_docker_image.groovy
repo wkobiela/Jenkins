@@ -24,6 +24,9 @@ node(params.NodeSelector) {
             sh 'git clone https://github.com/wkobiela/Dockerfiles.git'
             dir("$env.WORKSPACE/Dockerfiles") {
                 sh label: 'Check last commit', script: 'git log -1'
+                if (params.RepoBranch) {
+                    sh label: 'Checkout branch', script: "fit fetch && git checkout $RepoBranch"
+                }
             }
         } catch (Exception e) {
             error "Stage failed with exception $e"
