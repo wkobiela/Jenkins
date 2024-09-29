@@ -2,7 +2,7 @@ node(params.NodeSelector) {
     currentBuild.displayName = "#$env.BUILD_NUMBER node: $env.NODE_NAME"
 
     if (!params.ImageName) {
-        throw new IllegalArgumentException("Error: ImageName parameter is not set.")
+        error "Error: ImageName parameter is not set."
     }
     String imageTag = params.ImageTag.replaceAll(/\s+/, '').trim() ?: 'latest'
 
