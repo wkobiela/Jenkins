@@ -68,7 +68,7 @@ node(params.NodeSelector) {
     stage('Remove image') {
         println('========================================== REMOVE STAGE =============================================')
         try {
-            sh "docker rmi $(docker images -q $params.ImageName)"
+            sh "docker rmi \$(docker images -q $params.ImageName)"
         } catch (Exception e) {
             error "Stage failed with exception $e"
         }
