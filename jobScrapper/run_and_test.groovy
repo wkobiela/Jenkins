@@ -47,8 +47,10 @@ podTemplate(
     node(POD_LABEL) {
         container('jobscrapper') {
             try {
-                stage('Clone') {
+                stage('GHA status check') {
                     statusUpdate('pending')
+                }
+                stage('Clone') {
                     sh "git clone ${params.Repo_url} ."
                     sh "git config --global --add safe.directory ${WORKSPACE}"
                     sh 'git config --global --add remote.origin.fetch "+refs/pull/*/head:refs/remotes/origin/pr/*"'
