@@ -5,7 +5,13 @@
 
 version: 2
 updates:
-  - package-ecosystem: "" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  # Github Actions
+  - package-ecosystem: github-actions
+    directory: "/"
     schedule:
       interval: "daily"
+      time: "09:00"
+      timezone: "Poland"
+    open-pull-requests-limit: 3
+    assignees:
+      - "wkobiela"
