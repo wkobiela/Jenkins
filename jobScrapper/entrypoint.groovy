@@ -36,7 +36,11 @@ void addComment(String comment, String number) {
             -H "Authorization: token """ + TOKEN + """\" \
             -X POST \
             -d "{\\"body\\": \\"${comment}\\"}\""""
-            sh label: 'Add comment to Github PR', script: cmd
+            if (isUnix()) {
+                sh label: 'Add comment to Github PR', script: cmd
+            } else {
+                bat label: 'Add comment to Github PR', script: cmd
+            }
         }
     } catch (Exception ex) {
         echo "Cannot add comment. \n $ex"
