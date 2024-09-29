@@ -11,9 +11,19 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+
+permissions: {}
+
 jobs:
   run-lint:
     runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      packages: read
+      # To report GitHub Actions status checks
+      statuses: write
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -22,7 +32,7 @@ jobs:
           fetch-depth: 0
 
       - name: Lint Code Base
-        uses: github/super-linter@v7
+        uses: super-linter/super-linter/slim@v7
         env:
           VALIDATE_ALL_CODEBASE: false
           VALIDATE_GROOVY: true
