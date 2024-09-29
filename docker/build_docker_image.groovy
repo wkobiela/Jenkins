@@ -1,8 +1,10 @@
 node(params.NodeSelector) {
     currentBuild.displayName = "#$env.BUILD_NUMBER node: $env.NODE_NAME"
 
-    def image
-    String imageTag = params.ImageTag ?: 'latest'
+    if (!params.ImageName) {
+        error "Error: ImageName parameter is not set."
+    }
+    String imageTag = params.ImageTag.replaceAll(/\s+/, '').trim() ?: 'latest'
 
     stage('Clean') {
         println('============================================ CLEAN STAGE ============================================')
@@ -22,6 +24,9 @@ node(params.NodeSelector) {
             sh 'git clone https://github.com/wkobiela/Dockerfiles.git'
             dir("$env.WORKSPACE/Dockerfiles") {
                 sh label: 'Check last commit', script: 'git log -1'
+                if (params.RepoBranch) {
+                    sh label: 'Checkout branch', script: "git fetch && git checkout $RepoBranch"
+                }
             }
         } catch (Exception e) {
             error "Stage failed with exception $e"
@@ -49,9 +54,15 @@ node(params.NodeSelector) {
     }
     stage('Push image') {
         println('============================================ PUSH STAGE =============================================')
+        def tagsList = imageTag.tokenize(',')
+        echo "Tags list: ${tagsList}"
+        // pushing to DockerHub
         try {
             docker.withRegistry('', 'dockerhub') {
-                image.push(imageTag)
+                tagsList.each { tag ->
+                    echo "Pushing image with tag: ${tag}"
+                    image.push(tag)
+                }
             }
         } catch (Exception e) {
             error "Stage failed with exception $e"
@@ -60,7 +71,7 @@ node(params.NodeSelector) {
     stage('Remove image') {
         println('========================================== REMOVE STAGE =============================================')
         try {
-            sh "docker rmi $params.ImageName"
+            sh "docker images --filter=reference='$params.ImageName' --format \"{{.ID}}\" | xargs docker rmi -f || true"
         } catch (Exception e) {
             error "Stage failed with exception $e"
         }
