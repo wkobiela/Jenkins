@@ -21,12 +21,6 @@ currentBuild.displayName = "${checkName} #$env.BUILD_NUMBER"
 
 boolean testsFailed = false
 
-node('linux') {
-    stage('Github check') {
-        statusUpdate('pending')
-    }
-}
-
 podTemplate(
     containers: [
     containerTemplate(
@@ -53,6 +47,9 @@ podTemplate(
     node(POD_LABEL) {
         container('jobscrapper') {
             try {
+                stage('GHA status check') {
+                    statusUpdate('pending')
+                }
                 stage('Clone') {
                     sh "git clone ${params.Repo_url} ."
                     sh "git config --global --add safe.directory ${WORKSPACE}"
