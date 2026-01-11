@@ -3,7 +3,7 @@ import hudson.EnvVars
 import hudson.model.Cause$UpstreamCause
 
 Map parallelStages = [:]
-pythonsArray = ['3.9', '3.10', '3.11', '3.12']
+pythonsArray = ['3.11', '3.12', '3.13', '3.14']
 runAndTestStage = 'jobScrapperCI/build_run_test'
 banditStage = 'jobScrapperCI/run_bandit'
 def upstreamEnv = new EnvVars()
