@@ -47,7 +47,7 @@ podTemplate(
             alwaysPullImage: true,
             command: 'sleep',
             args: '99d',
-            runAsUser: 1001,
+            runAsUser: '1001',
             resourceRequestCpu: '1',
             resourceLimitCpu: '2',
             resourceRequestMemory: '2Gi',
